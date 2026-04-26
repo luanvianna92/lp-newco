@@ -109,41 +109,45 @@ INSERT INTO contato (idcontato, endereco, telefone1, telefone2, email) VALUES
  '+55 (35) 9989-6978', '+55 (35) 9126-9835', 'contato@newcobrazil.com');
 
 -- Categorias de produtos.
+-- IDs alinhados com o código legado em well-known/en/{adocantes,frutas,funcionais,oleos}.php:
+-- 1 = Frutas e Vegetais, 2 = Adoçantes, 3 = Outros Funcionais, 4 = Óleos.
 INSERT INTO categoria (idcategoria, nome_cat, nome_cat_en, capa, status) VALUES
-(1, 'Adoçantes', 'Sweeteners', '01.jpg', 0),
-(2, 'Frutas', 'Fruits', '02.jpg', 0),
-(3, 'Óleos', 'Oils', '03.jpg', 0),
-(4, 'Funcionais', 'Functional', '04.jpg', 0);
+(1, 'Frutas e Vegetais', 'Fruits and Vegetables', '01.jpg', 0),
+(2, 'Adoçantes', 'Sweeteners', '02.jpg', 0),
+(3, 'Outros Funcionais', 'Other Functional Products', '03.jpg', 0),
+(4, 'Óleos', 'Oils', '04.jpg', 0);
 
 -- Produtos por categoria. O campo `short` precisa ser único e válido como ID HTML
 -- (produto.php usa o valor em document.getElementById e na URL do modal).
 INSERT INTO produto
   (nome, nome_en, short, descricao, descricao_en, funcionalidade, funcionalidade_en,
    imagem, banner, categoria_idcategoria, status) VALUES
+-- Categoria 2: Adoçantes
 ('Monk Fruit', 'Monk Fruit', 'prod-monk',
  '<p>Adoçante natural extraído do monk fruit.</p>',
  '<p>Natural sweetener extracted from monk fruit.</p>',
  '<p>Zero calorias, alto poder adoçante.</p>',
  '<p>Zero calories, high sweetening power.</p>',
- 'monge.jpg', 'adocante_banner.jpg', 1, 0),
+ 'monge.jpg', 'adocante_banner.jpg', 2, 0),
 ('Cana de Açúcar', 'Sugar Cane', 'prod-cana',
  '<p>Adoçante derivado da cana de açúcar.</p>',
  '<p>Sweetener derived from sugar cane.</p>',
  '<p>Fonte natural de energia.</p>',
  '<p>Natural source of energy.</p>',
- 'cana.jpg', 'adocante_banner.jpg', 1, 0),
+ 'cana.jpg', 'adocante_banner.jpg', 2, 0),
+-- Categoria 1: Frutas e Vegetais
 ('Acerola', 'Acerola', 'prod-acerola',
  '<p>Acerola in natura, rica em vitamina C.</p>',
  '<p>Acerola in natura, rich in vitamin C.</p>',
  '<p>Antioxidante e fortalecedor do sistema imunológico.</p>',
  '<p>Antioxidant and immune system booster.</p>',
- 'Acerola-basket.jpg', 'acerola-info.jpg', 2, 0),
+ 'Acerola-basket.jpg', 'acerola-info.jpg', 1, 0),
 ('Maracujá', 'Passion Fruit', 'prod-maracuja',
  '<p>Maracujá tropical brasileiro.</p>',
  '<p>Brazilian tropical passion fruit.</p>',
  '<p>Calmante natural e fonte de fibras.</p>',
  '<p>Natural calmer and fiber source.</p>',
- 'passionfruit.jpg', NULL, 2, 0);
+ 'passionfruit.jpg', NULL, 1, 0);
 
 -- Admin master para acesso local.
 -- Login: admin  |  Senha: admin123  (somente desenvolvimento — trocar antes de qualquer ambiente compartilhado).

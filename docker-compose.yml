@@ -1,0 +1,52 @@
+services:
+  web:
+    build: ./docker/php
+    container_name: newco_web
+    ports:
+      - "8080:80"
+    volumes:
+      - ./well-known:/var/www/html
+    environment:
+      DB_HOST: db
+      DB_NAME: newcob53_bd
+      DB_USER: newco_user
+      DB_PASS: newco_pass
+    depends_on:
+      db:
+        condition: service_healthy
+
+  db:
+    image: mysql:8.0
+    container_name: newco_db
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpass
+      MYSQL_DATABASE: newcob53_bd
+      MYSQL_USER: newco_user
+      MYSQL_PASSWORD: newco_pass
+    volumes:
+      - newco_db_data:/var/lib/mysql
+      - ./docker/mysql/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
+    ports:
+      - "3306:3306"
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-uroot", "-prootpass"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    container_name: newco_pma
+    ports:
+      - "8081:80"
+    environment:
+      PMA_HOST: db
+      PMA_USER: root
+      PMA_PASSWORD: rootpass
+    depends_on:
+      db:
+        condition: service_healthy
+
+volumes:
+  newco_db_data:

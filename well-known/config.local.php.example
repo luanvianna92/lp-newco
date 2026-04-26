@@ -1,0 +1,20 @@
+<?php
+// Copie este arquivo para config.local.php e preencha com credenciais reais.
+// config.local.php é gitignored — só vai existir no servidor onde está rodando.
+
+// --- Banco de dados ---
+$server   = 'localhost';
+$username = 'SEU_USUARIO_DB';
+$password = 'SUA_SENHA_DB';
+$database = 'NOME_DO_BANCO';
+
+// --- SMTP do formulário de contato ---
+$SMTP_HOST = 'smtp.gmail.com';
+$SMTP_USER = 'remetente@example.com';
+$SMTP_PASS = 'senha-de-app';
+$SMTP_FROM = 'remetente@example.com';
+$SMTP_TO   = 'destinatario@example.com';
+
+// --- Outros ---
+$SITE_URL       = 'https://www.newcobrazil.com/#contact';
+$CONTACT_PHONES = '+55 (00) 0000-0000';

@@ -1,0 +1,12 @@
+.env
+*.log
+well-known/error_log
+well-known/.htaccess.phpupgrader.*
+well-known/bkp.zip
+well-known/bkp/
+well-known/config.local.php
+_quarentena/
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db

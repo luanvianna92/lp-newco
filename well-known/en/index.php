@@ -2,7 +2,9 @@
 header ('Content-type: text/html; charset=UTF-8');
 //CONECTA COM O BANCO DE DADOS
 require_once '../database.php';
+require_once __DIR__ . '/../partials/lang.php';
 require_once __DIR__ . '/../partials/secao_blocos.php';
+$lang_current = lang_current();
 
 //CARREGAR SEÇÕES INSTITUCIONAIS DO BANCO DE DADOS (slug => row)
 $sql = "SELECT * FROM secao WHERE ativo = 1 ORDER BY ordem ASC";
@@ -42,7 +44,7 @@ if (!$stmt_categoria->execute()) {
 
 <!DOCTYPE HTML>
 
-<html>
+<html lang="en">
 <head>
 	<title>Newco Brazil</title>
 	<meta charset="utf-8" />
@@ -52,28 +54,31 @@ if (!$stmt_categoria->execute()) {
 	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css">
 	<!--[if lte IE 8]><link rel="stylesheet" href="../assets/css/ie8.css" /><![endif]-->
 	<!--[if lte IE 9]><link rel="stylesheet" href="../assets/css/ie9.css" /><![endif]-->
+	<!-- Redesign — frente B1 -->
+	<link rel="preconnect" href="https://fonts.googleapis.com">
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+	<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap">
+	<link rel="stylesheet" href="../assets/css/redesign.css">
 	<link rel="stylesheet" href="../assets/css/secoes.css">
+	<link rel="alternate" hreflang="pt-BR" href="<?= htmlspecialchars(lang_alt_url('pt'), ENT_QUOTES) ?>">
+	<link rel="alternate" hreflang="en"    href="<?= htmlspecialchars(lang_alt_url('en'), ENT_QUOTES) ?>">
+	<link rel="alternate" hreflang="x-default" href="<?= htmlspecialchars(lang_alt_url('pt'), ENT_QUOTES) ?>">
 </head>
 <body>
 
-	<!-- Header -->
-	<header id="header">
+	<!-- Header (redesign — frente B1) -->
+	<?php require __DIR__ . '/../partials/header.php'; ?>
 
-		<!-- Logo -->
-		<h1 id="logo"><img src="../images/logo.png" class="img-responsive"></h1>
-
-		<!-- Nav -->
-		<nav id="nav">
-			<ul>
-				<li><a href="#intro">Home</a></li>
-				<li><a href="#quem">Who we are</a></li>
-				<li><a href="#oque">What we do</a></li>
-				<li><a href="#produtos">Our products</a></li>
-				<li><a href="#contact">Contact us</a></li>
-			</ul>
-		</nav>
-
-	</header>
+	<!-- Nav legado (anchors da home) — será reposicionado no redesign do hero -->
+	<nav id="nav">
+		<ul>
+			<li><a href="#intro">Home</a></li>
+			<li><a href="#quem">Who we are</a></li>
+			<li><a href="#oque">What we do</a></li>
+			<li><a href="#produtos">Our products</a></li>
+			<li><a href="#contact">Contact us</a></li>
+		</ul>
+	</nav>
 
 
 	<!-- SEÇÃO inicio -->
@@ -413,6 +418,7 @@ if (!$stmt_categoria->execute()) {
 	<script src="../assets/js/util.js"></script>
 	<!--[if lte IE 8]><script src="../assets/js/ie/respond.min.js"></script><![endif]-->
 	<script src="../assets/js/main.js"></script>
+	<script src="../assets/js/redesign.js"></script>
 
 	<script type="text/javascript">
 		$(".item").click(function(event) {

@@ -1,7 +1,9 @@
 <?php
 	header ('Content-type: text/html; charset=UTF-8');
 	require_once 'database.php';
+	require_once __DIR__ . '/partials/lang.php';
 	require_once __DIR__ . '/partials/segmentos.php';
+	$lang_current = lang_current();
 
 	if (isset($_GET['id'])) {
 		$id_categoria = $_GET['id'];
@@ -29,7 +31,7 @@
 
 <!DOCTYPE HTML>
 
-<html>
+<html lang="pt-BR">
 <head>
 	<title><?php echo $categoria['nome_cat'] ?> | Newco Brazil</title>
 	<meta charset="utf-8" />
@@ -39,29 +41,25 @@
 	<link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
 	<!--[if lte IE 8]><link rel="stylesheet" href="assets/css/ie8.css" /><![endif]-->
 	<!--[if lte IE 9]><link rel="stylesheet" href="assets/css/ie9.css" /><![endif]-->
+	<!-- Redesign — frente B1 -->
+	<link rel="preconnect" href="https://fonts.googleapis.com">
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+	<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap">
+	<link rel="stylesheet" href="assets/css/redesign.css">
 	<link rel="stylesheet" href="assets/css/secoes.css">
+	<link rel="alternate" hreflang="pt-BR" href="<?= htmlspecialchars(lang_alt_url('pt'), ENT_QUOTES) ?>">
+	<link rel="alternate" hreflang="en"    href="<?= htmlspecialchars(lang_alt_url('en'), ENT_QUOTES) ?>">
+	<link rel="alternate" hreflang="x-default" href="<?= htmlspecialchars(lang_alt_url('pt'), ENT_QUOTES) ?>">
 	<style type="text/css">
 		body:before {
 			display: none;
 		}
 	</style>
 </head>
-<body>
+<body class="rd-page">
 
-	<!-- Header -->
-	<header id="header">
-
-		<!-- Logo -->
-		<h1 id="logo"><img src="images/logo.png" class="img-responsive"></h1>
-
-		<!-- Nav -->
-		<nav id="nav">
-			<ul>
-				<li><a href="index.php">Início</a></li>
-			</ul>
-		</nav>
-
-	</header>
+	<!-- Header (redesign — frente B1) -->
+	<?php require __DIR__ . '/partials/header.php'; ?>
 
 	<div class="container-fluid" id="content">
 		<div class="container 90% panel">
@@ -189,6 +187,7 @@
 	<script src="assets/js/util.js"></script>
 	<!--[if lte IE 8]><script src="assets/js/ie/respond.min.js"></script><![endif]-->
 	<script src="assets/js/main.js"></script>
+	<script src="assets/js/redesign.js"></script>
 
 	<script type="text/javascript">
 

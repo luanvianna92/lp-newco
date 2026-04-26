@@ -1,0 +1,156 @@
+/*
+ * Newco redesign — fundação CSS (frente B1)
+ * Carregado APÓS main.css. Tudo escopado em .rd-* para não conflitar com o legado.
+ */
+
+:root {
+    /* Paleta */
+    --rd-color-primary: #1d4d3a;
+    --rd-color-primary-dark: #103024;
+    --rd-color-accent: #c9a14a;
+    --rd-color-text: #1f2a26;
+    --rd-color-text-muted: #6b7770;
+    --rd-color-bg: #ffffff;
+    --rd-color-bg-alt: #f7f6f1;
+    --rd-color-border: #e6e3d9;
+
+    /* Tipografia */
+    --rd-font-display: 'Inter', system-ui, -apple-system, "Source Sans Pro", sans-serif;
+    --rd-font-body:    'Inter', system-ui, -apple-system, "Source Sans Pro", sans-serif;
+
+    /* Espaços */
+    --rd-space-xs: 0.25rem;
+    --rd-space-sm: 0.5rem;
+    --rd-space-md: 1rem;
+    --rd-space-lg: 1.5rem;
+    --rd-space-xl: 2.5rem;
+
+    /* Sombras / transições */
+    --rd-shadow-sm: 0 1px 2px rgba(0,0,0,0.05);
+    --rd-shadow-md: 0 4px 16px rgba(0,0,0,0.08);
+    --rd-transition: 200ms ease;
+
+    /* Header */
+    --rd-z-header: 100;
+    --rd-header-h: 72px;
+    --rd-header-h-mobile: 56px;
+}
+
+/* Compensa o header fixo nas páginas que o usam */
+body.rd-page {
+    padding-top: var(--rd-header-h);
+}
+
+/* ============ Header ============ */
+
+.rd-header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: var(--rd-header-h);
+    background: var(--rd-color-bg);
+    border-bottom: 1px solid transparent;
+    z-index: var(--rd-z-header);
+    transition: box-shadow var(--rd-transition), border-color var(--rd-transition);
+    font-family: var(--rd-font-display);
+    color: var(--rd-color-text);
+}
+
+.rd-header.is-scrolled {
+    box-shadow: var(--rd-shadow-md);
+    border-bottom-color: var(--rd-color-border);
+}
+
+.rd-header__inner {
+    max-width: 1200px;
+    height: 100%;
+    margin: 0 auto;
+    padding: 0 var(--rd-space-lg);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--rd-space-lg);
+}
+
+/* Logo */
+
+.rd-logo {
+    display: inline-flex;
+    align-items: center;
+    height: 100%;
+    padding: var(--rd-space-sm) 0;
+    text-decoration: none;
+    border: 0;
+}
+
+.rd-logo img {
+    height: 100%;
+    max-height: calc(var(--rd-header-h) - var(--rd-space-md) * 2);
+    width: auto;
+    display: block;
+}
+
+/* Toggle de idioma */
+
+.rd-lang-toggle {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--rd-space-sm);
+    font-size: 0.95rem;
+    letter-spacing: 0.04em;
+    font-weight: 500;
+}
+
+.rd-lang-toggle__item {
+    color: var(--rd-color-text-muted);
+    text-decoration: none;
+    padding: var(--rd-space-xs) var(--rd-space-sm);
+    border-bottom: 2px solid transparent;
+    transition: color var(--rd-transition), border-color var(--rd-transition);
+    border-radius: 0;
+    border-top: 0;
+    border-left: 0;
+    border-right: 0;
+}
+
+.rd-lang-toggle__item:hover,
+.rd-lang-toggle__item:focus-visible {
+    color: var(--rd-color-primary);
+    outline: none;
+}
+
+.rd-lang-toggle__item.is-active {
+    color: var(--rd-color-primary);
+    font-weight: 700;
+    border-bottom-color: var(--rd-color-accent);
+}
+
+.rd-lang-toggle__sep {
+    color: var(--rd-color-border);
+    user-select: none;
+}
+
+/* ============ Mobile ============ */
+
+@media (max-width: 736px) {
+    :root {
+        --rd-header-h: var(--rd-header-h-mobile);
+    }
+
+    .rd-header__inner {
+        padding: 0 var(--rd-space-md);
+        gap: var(--rd-space-md);
+    }
+
+    .rd-lang-toggle {
+        font-size: 0.875rem;
+    }
+}
+
+/* ============ Acessibilidade ============ */
+
+.rd-header :focus-visible {
+    outline: 2px solid var(--rd-color-accent);
+    outline-offset: 2px;
+}

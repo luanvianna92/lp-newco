@@ -167,17 +167,29 @@ if (!$stmt_categoria->execute()) {
 	<!-- END O QUE FAZEMOS -->
 
 
-	<!-- SEÇÃO tecnologia (frente A1: spray-drying) -->
+	<!-- SEÇÃO tecnologia (frente A1 + redesign C3) -->
 	<?php if (!empty($secao['tecnologia'])): ?>
 	<section id="tecnologia" class="main style2 right dark fullscreen">
-		<div class="content box style2">
-			<header>
-				<h2><?= htmlspecialchars($secao['tecnologia']['titulo'], ENT_QUOTES, 'UTF-8') ?></h2>
-				<?php if (!empty($secao['tecnologia']['subtitulo'])): ?>
-					<p class="rd-secao-subtitulo"><?= htmlspecialchars($secao['tecnologia']['subtitulo'], ENT_QUOTES, 'UTF-8') ?></p>
-				<?php endif; ?>
-			</header>
-			<?= $secao['tecnologia']['conteudo'] ?? '' ?>
+		<div class="content box style2 rd-secao__inner">
+			<div class="rd-secao__layout">
+				<div class="rd-secao__column rd-secao__column--text">
+					<div class="rd-secao__num">01 — Tecnologia</div>
+					<h2 class="rd-secao__title"><?= htmlspecialchars($secao['tecnologia']['titulo'], ENT_QUOTES, 'UTF-8') ?></h2>
+					<?php if (!empty($secao['tecnologia']['subtitulo'])): ?>
+						<p class="rd-secao__sub"><?= htmlspecialchars($secao['tecnologia']['subtitulo'], ENT_QUOTES, 'UTF-8') ?></p>
+					<?php endif; ?>
+					<div class="rd-secao__lead"><?= $secao['tecnologia']['conteudo'] ?? '' ?></div>
+				</div>
+				<div class="rd-secao__column rd-secao__column--media">
+					<figure class="rd-figure">
+						<picture>
+							<source srcset="images/spray-dryer.webp" type="image/webp">
+							<img src="images/spray-dryer.jpg" alt="Spray dryer industrial — Newco Brazil" loading="lazy">
+						</picture>
+						<figcaption>Sul de Minas, Brasil</figcaption>
+					</figure>
+				</div>
+			</div>
 
 			<?php if (!empty($blocos_tecnologia)): ?>
 				<div class="rd-blocos-grid">
@@ -193,31 +205,40 @@ if (!$stmt_categoria->execute()) {
 				</div>
 			<?php endif; ?>
 		</div>
-		<a href="#produtos" class="button style2 down anchored">Próximo</a>
+		<a href="#localizacao" class="button style2 down anchored">Próximo</a>
 	</section>
 	<?php endif; ?>
 	<!-- END TECNOLOGIA -->
 
 
-	<!-- SEÇÃO localizacao (frente A3: Porto Seco) -->
+	<!-- SEÇÃO localizacao (frente A3 + redesign C3) -->
 	<?php if (!empty($secao['localizacao'])): ?>
 	<section id="localizacao" class="main style2 left dark fullscreen">
-		<div class="content box style2">
-			<header>
-				<h2><?= htmlspecialchars($secao['localizacao']['titulo'], ENT_QUOTES, 'UTF-8') ?></h2>
-				<?php if (!empty($secao['localizacao']['subtitulo'])): ?>
-					<p class="rd-secao-subtitulo"><?= htmlspecialchars($secao['localizacao']['subtitulo'], ENT_QUOTES, 'UTF-8') ?></p>
-				<?php endif; ?>
-			</header>
-			<?= $secao['localizacao']['conteudo'] ?? '' ?>
+		<div class="content box style2 rd-secao__inner">
+			<div class="rd-secao__layout rd-secao__layout--reverse">
+				<div class="rd-secao__column rd-secao__column--media">
+					<figure class="rd-figure">
+						<picture>
+							<source srcset="images/porto-seco.webp" type="image/webp">
+							<img src="images/porto-seco.jpg" alt="Porto Seco Sul de Minas — terminal de containers" loading="lazy">
+						</picture>
+						<figcaption>Porto Seco · Varginha/MG</figcaption>
+					</figure>
+				</div>
+				<div class="rd-secao__column rd-secao__column--text">
+					<div class="rd-secao__num">02 — Logística</div>
+					<h2 class="rd-secao__title"><?= htmlspecialchars($secao['localizacao']['titulo'], ENT_QUOTES, 'UTF-8') ?></h2>
+					<?php if (!empty($secao['localizacao']['subtitulo'])): ?>
+						<p class="rd-secao__sub"><?= htmlspecialchars($secao['localizacao']['subtitulo'], ENT_QUOTES, 'UTF-8') ?></p>
+					<?php endif; ?>
+					<div class="rd-secao__lead"><?= $secao['localizacao']['conteudo'] ?? '' ?></div>
+				</div>
+			</div>
 
 			<?php if (!empty($blocos_localizacao)): ?>
-				<div class="rd-blocos-grid rd-blocos-grid--kpis">
+				<div class="rd-blocos-grid">
 					<?php foreach ($blocos_localizacao as $b): ?>
 						<div class="rd-bloco rd-bloco--kpi">
-							<?php if (!empty($b['icone'])): ?>
-								<span class="rd-bloco__icone"><i class="fa <?= htmlspecialchars($b['icone'], ENT_QUOTES, 'UTF-8') ?>" aria-hidden="true"></i></span>
-							<?php endif; ?>
 							<?php if (!empty($b['valor_destaque'])): ?>
 								<div class="rd-bloco__valor"><?= htmlspecialchars($b['valor_destaque'], ENT_QUOTES, 'UTF-8') ?></div>
 							<?php endif; ?>
@@ -228,23 +249,35 @@ if (!$stmt_categoria->execute()) {
 				</div>
 			<?php endif; ?>
 		</div>
-		<a href="#produtos" class="button style2 down anchored">Próximo</a>
+		<a href="#sustentabilidade" class="button style2 down anchored">Próximo</a>
 	</section>
 	<?php endif; ?>
 	<!-- END LOCALIZACAO -->
 
 
-	<!-- SEÇÃO sustentabilidade (frente A4) -->
+	<!-- SEÇÃO sustentabilidade (frente A4 + redesign C3) -->
 	<?php if (!empty($secao['sustentabilidade'])): ?>
 	<section id="sustentabilidade" class="main style2 right dark fullscreen">
-		<div class="content box style2">
-			<header>
-				<h2><?= htmlspecialchars($secao['sustentabilidade']['titulo'], ENT_QUOTES, 'UTF-8') ?></h2>
-				<?php if (!empty($secao['sustentabilidade']['subtitulo'])): ?>
-					<p class="rd-secao-subtitulo"><?= htmlspecialchars($secao['sustentabilidade']['subtitulo'], ENT_QUOTES, 'UTF-8') ?></p>
-				<?php endif; ?>
-			</header>
-			<?= $secao['sustentabilidade']['conteudo'] ?? '' ?>
+		<div class="content box style2 rd-secao__inner">
+			<div class="rd-secao__layout">
+				<div class="rd-secao__column rd-secao__column--text">
+					<div class="rd-secao__num">03 — Sustentabilidade</div>
+					<h2 class="rd-secao__title"><?= htmlspecialchars($secao['sustentabilidade']['titulo'], ENT_QUOTES, 'UTF-8') ?></h2>
+					<?php if (!empty($secao['sustentabilidade']['subtitulo'])): ?>
+						<p class="rd-secao__sub"><?= htmlspecialchars($secao['sustentabilidade']['subtitulo'], ENT_QUOTES, 'UTF-8') ?></p>
+					<?php endif; ?>
+					<div class="rd-secao__lead"><?= $secao['sustentabilidade']['conteudo'] ?? '' ?></div>
+				</div>
+				<div class="rd-secao__column rd-secao__column--media">
+					<figure class="rd-figure">
+						<picture>
+							<source srcset="images/fruta-em-po.webp" type="image/webp">
+							<img src="images/fruta-em-po.jpg" alt="Fruta desidratada em pó — produto Newco" loading="lazy">
+						</picture>
+						<figcaption>Cadeia rastreada · Origem certificada</figcaption>
+					</figure>
+				</div>
+			</div>
 
 			<?php if (!empty($blocos_sustentabilidade)): ?>
 				<div class="rd-blocos-grid">

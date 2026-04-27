@@ -54,7 +54,7 @@
 		}
 	</style>
 </head>
-<body class="rd-page">
+<body>
 
 	<!-- Header (redesign — frente B1) -->
 	<?php require __DIR__ . '/../partials/header.php'; ?>

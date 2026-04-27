@@ -1,129 +1,470 @@
 /*
- * Estilos das novas seções institucionais (Tecnologia, Localização, Sustentabilidade).
- * Carregado APÓS main.css; seletores escopados em .rd-secao-* para não conflitar com legado.
+ * Newco — Editorial Industrial sections (frente C3)
  *
- * Se assets/css/redesign.css existir (frente B1), os tokens --rd-* aplicam.
- * Caso contrário, este arquivo define fallbacks próprios.
+ * Aplica-se SOMENTE a #tecnologia, #localizacao, #sustentabilidade.
+ * Não toca em #intro, #quem, #oque, #produtos, #contact (legado HTML5UP).
+ *
+ * Carregado APÓS main.css e redesign.css (que define os tokens).
  */
 
-:root {
-    --rd-color-primary: #1d4d3a;
-    --rd-color-primary-dark: #103024;
-    --rd-color-accent: #c9a14a;
-    --rd-color-text: #1f2a26;
-    --rd-color-text-muted: #6b7770;
-    --rd-color-bg-light: rgba(255, 255, 255, 0.92);
-    --rd-color-border: rgba(255, 255, 255, 0.18);
-    --rd-secao-radius: 12px;
+/* ============================================================
+ * 1. Reset agressivo do layout legado nas 3 seções novas
+ * ============================================================ */
+
+#tecnologia,
+#localizacao,
+#sustentabilidade {
+    height: auto !important;
+    min-height: auto !important;
+    overflow: visible !important;
+    padding: clamp(4.5rem, 9vw, 9rem) 0 clamp(5rem, 11vw, 11rem) !important;
+    font-family: var(--rd-font-body);
+    color: var(--rd-color-text);
+    position: relative;
+    text-align: left !important;
 }
 
-/* ============ Subtítulo das seções novas ============ */
+#tecnologia .content,
+#localizacao .content,
+#sustentabilidade .content {
+    width: 100% !important;
+    max-width: none !important;
+    display: block !important;
+    position: relative !important;
+    text-align: left !important;
+    padding: 0 !important;
+    transform: none !important;
+    opacity: 1 !important;
+    z-index: 1;
+}
 
-.rd-secao-subtitulo {
-    margin: 0.25rem 0 1.5rem 0;
-    font-size: 1.05rem;
+#tecnologia.style2.left::after,
+#tecnologia.style2.right::after,
+#localizacao.style2.left::after,
+#localizacao.style2.right::after,
+#sustentabilidade.style2.left::after,
+#sustentabilidade.style2.right::after {
+    display: none !important;
+}
+
+.rd-secao__inner {
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 0 clamp(1.25rem, 5vw, 4rem);
+    position: relative;
+    z-index: 1;
+}
+
+/* ============================================================
+ * 2. Backgrounds + texturas por seção
+ * ============================================================ */
+
+#tecnologia {
+    background: var(--rd-color-cream) !important;
+    color: var(--rd-color-text) !important;
+}
+
+#localizacao {
+    background: var(--rd-color-charcoal) !important;
+    color: var(--rd-color-text-onDark) !important;
+}
+
+#sustentabilidade {
+    background:
+        linear-gradient(180deg, var(--rd-color-cream-deep) 0%, var(--rd-color-cream) 65%, var(--rd-color-cream) 100%) !important;
+    color: var(--rd-color-text) !important;
+}
+
+/* Textura sutil de papel (dot grid) nas seções claras */
+#tecnologia::before,
+#sustentabilidade::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background-image: radial-gradient(circle at 1px 1px, rgba(29, 77, 58, 0.05) 1px, transparent 0);
+    background-size: 28px 28px;
+    z-index: 0;
+    mask-image: linear-gradient(180deg, transparent 0, #000 8%, #000 92%, transparent 100%);
+    -webkit-mask-image: linear-gradient(180deg, transparent 0, #000 8%, #000 92%, transparent 100%);
+}
+
+/* Linha vertical decorativa dourada (à esquerda, quase fora do container) */
+#tecnologia::after,
+#localizacao::after,
+#sustentabilidade::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: clamp(1.25rem, 4vw, 3rem);
+    width: 1px;
+    background: linear-gradient(
+        180deg,
+        transparent 0,
+        var(--rd-color-accent) 20%,
+        var(--rd-color-accent) 80%,
+        transparent 100%
+    );
+    opacity: 0.45;
+    pointer-events: none;
+    z-index: 0;
+}
+
+#localizacao::after { opacity: 0.65; }
+
+/* ============================================================
+ * 3. Header da seção (numeração editorial + título serif)
+ * ============================================================ */
+
+.rd-secao__num {
+    font-family: var(--rd-font-body);
+    font-size: 0.78rem;
+    letter-spacing: 0.42em;
     color: var(--rd-color-accent);
-    font-weight: 500;
-    letter-spacing: 0.02em;
     text-transform: uppercase;
+    font-weight: 600;
+    margin: 0 0 1.5rem 0;
+    display: flex;
+    align-items: center;
+    gap: 0.85rem;
 }
 
-/* ============ Grid de blocos (3 cards de benefício, 4 KPIs etc.) ============ */
+.rd-secao__num::after {
+    content: '';
+    flex: 0 0 56px;
+    height: 1px;
+    background: var(--rd-color-accent);
+    opacity: 0.65;
+}
+
+#localizacao .rd-secao__num { color: var(--rd-color-accent); }
+
+.rd-secao__title {
+    font-family: var(--rd-font-display);
+    font-variation-settings: 'opsz' 144, 'wght' 700;
+    font-size: clamp(2.5rem, 6.4vw, 5.6rem);
+    line-height: 0.92;
+    letter-spacing: -0.028em;
+    margin: 0 0 0.85rem 0;
+    color: var(--rd-color-primary);
+    font-weight: 700;
+}
+
+#localizacao .rd-secao__title { color: var(--rd-color-cream); }
+#sustentabilidade .rd-secao__title { color: var(--rd-color-primary-dark); }
+
+.rd-secao__sub {
+    font-family: var(--rd-font-body);
+    font-size: clamp(0.85rem, 1.15vw, 1rem);
+    font-weight: 500;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--rd-color-accent);
+    margin: 0 0 2.25rem 0;
+}
+
+.rd-secao__lead {
+    font-family: var(--rd-font-body);
+    font-size: clamp(1rem, 1.32vw, 1.18rem);
+    line-height: 1.65;
+    font-weight: 400;
+    color: var(--rd-color-text);
+    max-width: 58ch;
+}
+
+#localizacao .rd-secao__lead { color: var(--rd-color-text-onDark-muted); }
+
+.rd-secao__lead p { margin: 0 0 1rem 0; }
+.rd-secao__lead p:last-child { margin-bottom: 0; }
+
+.rd-secao__lead strong {
+    color: var(--rd-color-primary);
+    font-weight: 600;
+}
+
+#localizacao .rd-secao__lead strong { color: var(--rd-color-accent); }
+
+/* ============================================================
+ * 4. Layout texto + imagem assimétrico
+ * ============================================================ */
+
+.rd-secao__layout {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: clamp(2rem, 4.5vw, 4rem);
+    align-items: start;
+}
+
+@media (min-width: 920px) {
+    .rd-secao__layout {
+        grid-template-columns: 1.05fr 0.95fr;
+    }
+    .rd-secao__layout--reverse {
+        grid-template-columns: 0.95fr 1.05fr;
+    }
+    .rd-secao__layout--reverse .rd-secao__column--media { order: 1; }
+    .rd-secao__layout--reverse .rd-secao__column--text  { order: 2; }
+}
+
+.rd-secao__column--text { padding-top: 0.5rem; }
+
+/* ============================================================
+ * 5. Figura editorial (imagem com cantos decorativos + caption)
+ * ============================================================ */
+
+.rd-figure {
+    margin: 0;
+    position: relative;
+    overflow: hidden;
+}
+
+.rd-figure picture,
+.rd-figure img {
+    display: block;
+    width: 100%;
+}
+
+.rd-figure img {
+    aspect-ratio: 4 / 5;
+    object-fit: cover;
+    height: auto;
+    transition: transform var(--rd-transition-slow);
+}
+
+.rd-figure:hover img {
+    transform: scale(1.04);
+}
+
+/* Cantos dourados decorativos (estilo "fotojornalismo") */
+.rd-figure::before,
+.rd-figure::after {
+    content: '';
+    position: absolute;
+    width: 56px;
+    height: 56px;
+    border: 2px solid var(--rd-color-accent);
+    pointer-events: none;
+    z-index: 2;
+    transition: width var(--rd-transition-slow), height var(--rd-transition-slow);
+}
+
+.rd-figure::before {
+    top: -8px;
+    right: -8px;
+    border-bottom: 0;
+    border-left: 0;
+}
+
+.rd-figure::after {
+    bottom: -8px;
+    left: -8px;
+    border-top: 0;
+    border-right: 0;
+}
+
+.rd-figure:hover::before,
+.rd-figure:hover::after {
+    width: 92px;
+    height: 92px;
+}
+
+.rd-figure figcaption {
+    position: absolute;
+    bottom: 1.25rem;
+    left: 1.25rem;
+    background: var(--rd-color-cream);
+    color: var(--rd-color-text);
+    padding: 0.55rem 0.95rem;
+    font-family: var(--rd-font-body);
+    font-size: 0.72rem;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    font-weight: 500;
+    z-index: 3;
+}
+
+#localizacao .rd-figure figcaption {
+    background: var(--rd-color-charcoal);
+    color: var(--rd-color-accent);
+    border: 1px solid var(--rd-color-accent);
+}
+
+/* ============================================================
+ * 6. Grid de cards (Tecnologia + Sustentabilidade)
+ * ============================================================ */
 
 .rd-blocos-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-    gap: 1.5rem;
-    margin-top: 2rem;
-    width: 100%;
-    max-width: 980px;
+    grid-template-columns: 1fr;
+    gap: clamp(1.25rem, 2.5vw, 2rem);
+    margin-top: clamp(3.5rem, 6vw, 5.5rem);
+    padding-top: clamp(2.5rem, 4vw, 3.5rem);
+    border-top: 1px solid var(--rd-color-border);
+    position: relative;
 }
 
+#localizacao .rd-blocos-grid {
+    border-top-color: var(--rd-color-border-onDark);
+}
+
+@media (min-width: 600px) {
+    .rd-blocos-grid { grid-template-columns: repeat(2, 1fr); }
+}
+
+@media (min-width: 1000px) {
+    #tecnologia .rd-blocos-grid { grid-template-columns: repeat(3, 1fr); }
+    #localizacao .rd-blocos-grid { grid-template-columns: repeat(4, 1fr); }
+    #sustentabilidade .rd-blocos-grid { grid-template-columns: repeat(4, 1fr); }
+}
+
+/* Card padrão */
 .rd-bloco {
-    background: var(--rd-color-bg-light);
-    color: var(--rd-color-text);
-    padding: 1.5rem;
-    border-radius: var(--rd-secao-radius);
-    border: 1px solid var(--rd-color-border);
-    text-align: left;
-    transition: transform 200ms ease, box-shadow 200ms ease;
+    position: relative;
+    padding: 1.5rem 1.25rem 1.5rem 1.5rem;
+    background: transparent;
+    border: 0;
+    border-left: 1px solid var(--rd-color-border);
+    display: flex;
+    flex-direction: column;
+    gap: 0.85rem;
+    transition: transform var(--rd-transition), border-color var(--rd-transition);
+    box-shadow: none !important;
+}
+
+#localizacao .rd-bloco {
+    border-left-color: var(--rd-color-border-onDark);
 }
 
 .rd-bloco:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+    transform: translateY(-3px);
+    border-left-color: var(--rd-color-accent);
 }
 
 .rd-bloco__icone {
-    display: inline-flex;
+    width: 46px !important;
+    height: 46px !important;
+    display: inline-flex !important;
     align-items: center;
     justify-content: center;
-    width: 48px;
-    height: 48px;
-    border-radius: 50%;
-    background: var(--rd-color-primary);
-    color: var(--rd-color-accent);
-    font-size: 1.25rem;
-    margin-bottom: 1rem;
+    border-radius: 0 !important;
+    background: transparent !important;
+    border: 1.5px solid var(--rd-color-primary) !important;
+    color: var(--rd-color-primary) !important;
+    font-size: 1.2rem !important;
+    margin-bottom: 0.5rem;
+    transition: var(--rd-transition);
+    flex-shrink: 0;
 }
 
-.rd-bloco__valor {
-    font-size: 2rem;
-    font-weight: 700;
-    color: var(--rd-color-primary);
-    line-height: 1.1;
-    margin-bottom: 0.25rem;
+#localizacao .rd-bloco__icone {
+    border-color: var(--rd-color-accent) !important;
+    color: var(--rd-color-accent) !important;
 }
+
+.rd-bloco:hover .rd-bloco__icone {
+    background: var(--rd-color-primary) !important;
+    color: var(--rd-color-cream) !important;
+    transform: rotate(-4deg);
+}
+
+#localizacao .rd-bloco:hover .rd-bloco__icone {
+    background: var(--rd-color-accent) !important;
+    color: var(--rd-color-charcoal) !important;
+}
+
+.rd-bloco__icone .fa { color: inherit !important; }
 
 .rd-bloco__titulo {
-    font-size: 1.05rem;
+    font-family: var(--rd-font-display);
+    font-variation-settings: 'opsz' 36, 'wght' 600;
+    font-size: 1.32rem;
+    line-height: 1.18;
+    letter-spacing: -0.005em;
+    margin: 0;
+    color: var(--rd-color-primary-dark);
     font-weight: 600;
-    color: var(--rd-color-text);
-    margin: 0 0 0.5rem 0;
-    text-transform: none;
-    letter-spacing: 0;
+    text-transform: none !important;
+}
+
+#localizacao .rd-bloco__titulo {
+    color: var(--rd-color-cream);
 }
 
 .rd-bloco__conteudo {
-    font-size: 0.92rem;
+    font-family: var(--rd-font-body);
+    font-size: 0.93rem;
+    line-height: 1.6;
     color: var(--rd-color-text-muted);
-    line-height: 1.5;
-}
-
-.rd-bloco__conteudo p {
     margin: 0;
 }
 
-/* ============ Frente C1: filtros e tags de segmento ============ */
+#localizacao .rd-bloco__conteudo {
+    color: var(--rd-color-text-onDark-muted);
+}
+
+.rd-bloco__conteudo p { margin: 0 0 0.4rem 0; }
+.rd-bloco__conteudo p:last-child { margin-bottom: 0; }
+
+/* ============================================================
+ * 7. KPIs gigantes (Localização)
+ * ============================================================ */
+
+.rd-bloco--kpi .rd-bloco__icone {
+    display: none !important;
+}
+
+.rd-bloco__valor {
+    font-family: var(--rd-font-display);
+    font-variation-settings: 'opsz' 144, 'wght' 800;
+    font-size: clamp(2.75rem, 5.5vw, 4.5rem);
+    line-height: 0.85;
+    letter-spacing: -0.025em;
+    color: var(--rd-color-accent);
+    font-weight: 800;
+    display: block;
+    margin: 0 0 1rem 0;
+}
+
+#tecnologia .rd-bloco__valor,
+#sustentabilidade .rd-bloco__valor {
+    color: var(--rd-color-primary);
+}
+
+/* ============================================================
+ * 8. Filtros (C1) — recolore para o sistema editorial
+ * ============================================================ */
 
 .rd-filtros {
+    font-family: var(--rd-font-body);
+    margin: 1.5rem 0 2rem;
     display: flex;
     flex-wrap: wrap;
     gap: 0.5rem;
-    margin: 1.5rem 0 2rem;
     align-items: center;
 }
 
 .rd-filtros__label {
-    font-size: 0.85rem;
-    color: var(--rd-color-text-muted);
+    font-size: 0.75rem;
+    letter-spacing: 0.22em;
     text-transform: uppercase;
-    letter-spacing: 0.08em;
-    margin-right: 0.5rem;
+    color: var(--rd-color-text-muted);
+    margin-right: 0.6rem;
+    font-weight: 500;
 }
 
 .rd-filtro {
-    display: inline-flex;
-    align-items: center;
-    padding: 0.4rem 0.95rem;
-    border: 1.5px solid var(--rd-color-border);
-    border-radius: 999px;
-    font-size: 0.875rem;
+    font-family: var(--rd-font-body);
+    font-size: 0.82rem;
     font-weight: 500;
-    color: var(--rd-color-text);
+    padding: 0.5rem 1.1rem;
     background: transparent;
+    border: 1px solid var(--rd-color-border);
+    border-radius: 999px;
+    color: var(--rd-color-text);
     cursor: pointer;
-    transition: background 200ms ease, border-color 200ms ease, color 200ms ease;
+    transition: var(--rd-transition);
+    letter-spacing: 0.04em;
 }
 
 .rd-filtro:hover {
@@ -134,73 +475,67 @@
 .rd-filtro.is-active {
     background: var(--rd-color-primary);
     border-color: var(--rd-color-primary);
-    color: #fff;
+    color: var(--rd-color-cream);
 }
 
 .rd-tags-segmento {
+    margin-top: 0.4rem;
     display: flex;
     flex-wrap: wrap;
     gap: 0.35rem;
-    margin-top: 0.4rem;
 }
 
 .rd-tag-segmento {
     display: inline-flex;
     align-items: center;
-    padding: 0.15rem 0.55rem;
-    font-size: 0.72rem;
+    font-family: var(--rd-font-body);
+    font-size: 0.68rem;
     font-weight: 600;
+    letter-spacing: 0.12em;
     text-transform: uppercase;
-    letter-spacing: 0.05em;
-    border-radius: 4px;
+    padding: 0.22rem 0.6rem;
     color: #fff;
-    background: var(--rd-color-primary);
+    border-radius: 0;
 }
 
-.produto.is-hidden,
-.fruta.is-hidden,
-.item.is-hidden {
-    display: none !important;
-}
+.produto.is-hidden, .fruta.is-hidden, .item.is-hidden { display: none !important; }
 
-/* ============ Frente A2: form de download de ficha técnica ============ */
+/* ============================================================
+ * 9. Form de download de ficha técnica (A2) — recolore
+ * ============================================================ */
 
 .rd-ficha-form-wrapper {
     margin-top: 1.5rem;
-    padding: 1.25rem;
-    background: rgba(29, 77, 58, 0.05);
-    border-left: 3px solid var(--rd-color-primary);
-    border-radius: 0 8px 8px 0;
+    padding: 1.5rem;
+    background: var(--rd-color-cream);
+    border-left: 3px solid var(--rd-color-accent);
 }
 
 .rd-ficha-form-wrapper h4 {
+    font-family: var(--rd-font-display);
     margin: 0 0 0.5rem 0;
+    font-size: 1.15rem;
     color: var(--rd-color-primary);
-    font-size: 1.05rem;
     font-weight: 600;
 }
 
 .rd-ficha-form-wrapper p {
-    margin: 0 0 0.85rem 0;
+    font-family: var(--rd-font-body);
+    margin: 0 0 1rem 0;
     color: var(--rd-color-text-muted);
     font-size: 0.9rem;
 }
 
-.rd-ficha-form {
-    display: grid;
-    gap: 0.6rem;
-}
+.rd-ficha-form { display: grid; gap: 0.6rem; }
 
 .rd-ficha-form input[type="text"],
 .rd-ficha-form input[type="email"] {
-    padding: 0.55rem 0.85rem;
+    font-family: var(--rd-font-body);
+    padding: 0.6rem 0.9rem;
     border: 1px solid var(--rd-color-border);
-    border-radius: 6px;
-    font-size: 0.92rem;
-    font-family: inherit;
     background: #fff;
-    color: var(--rd-color-text);
-    transition: border-color 200ms ease;
+    font-size: 0.95rem;
+    transition: border-color var(--rd-transition);
 }
 
 .rd-ficha-form input:focus {
@@ -209,96 +544,138 @@
 }
 
 .rd-ficha-form button {
-    padding: 0.65rem 1rem;
+    font-family: var(--rd-font-body);
     background: var(--rd-color-primary);
-    color: #fff;
-    border: none;
-    border-radius: 6px;
+    color: var(--rd-color-cream);
+    border: 0;
+    padding: 0.7rem 1rem;
     font-weight: 600;
     font-size: 0.92rem;
+    letter-spacing: 0.05em;
     cursor: pointer;
-    transition: background 200ms ease, transform 200ms ease;
+    transition: background var(--rd-transition);
     display: inline-flex;
     align-items: center;
-    justify-content: center;
     gap: 0.5rem;
+    justify-content: center;
 }
 
-.rd-ficha-form button:hover {
-    background: var(--rd-color-primary-dark);
-    transform: translateY(-1px);
+.rd-ficha-form button:hover { background: var(--rd-color-primary-dark); }
+
+.rd-ficha-form__msg--ok    { color: var(--rd-color-primary); }
+.rd-ficha-form__msg--erro  { color: var(--rd-color-terracotta); }
+
+/* ============================================================
+ * 10. Botão âncora "Próximo" das seções novas
+ * ============================================================ */
+
+#tecnologia > .button.style2.down,
+#localizacao > .button.style2.down,
+#sustentabilidade > .button.style2.down {
+    z-index: 5;
+    background: var(--rd-color-accent) !important;
+    color: var(--rd-color-charcoal) !important;
+    border-color: var(--rd-color-accent) !important;
+    box-shadow: 0 8px 28px rgba(0, 0, 0, 0.18);
+    transition: background var(--rd-transition), transform var(--rd-transition);
 }
 
-.rd-ficha-form button:disabled {
-    opacity: 0.6;
-    cursor: not-allowed;
-    transform: none;
+#tecnologia > .button.style2.down:hover,
+#localizacao > .button.style2.down:hover,
+#sustentabilidade > .button.style2.down:hover {
+    background: var(--rd-color-accent-soft) !important;
+    color: var(--rd-color-charcoal) !important;
+    transform: translateX(-50%) translateY(-2px);
 }
 
-.rd-ficha-form__msg {
-    margin-top: 0.5rem;
-    font-size: 0.88rem;
+/* ============================================================
+ * 11. Animações de entrada (CSS-only, staggered)
+ * ============================================================ */
+
+@keyframes rd-rise {
+    from { opacity: 0; transform: translateY(28px); }
+    to   { opacity: 1; transform: translateY(0); }
 }
 
-.rd-ficha-form__msg--ok    { color: #1d4d3a; }
-.rd-ficha-form__msg--erro  { color: #b32c2c; }
-
-/* ============ Frente C2: fix de cortes nas seções fullscreen ============
- * O template Big Picture (.main.fullscreen) tem height:100% + overflow:hidden e
- * centraliza verticalmente via .style2:after, o que corta o grid de cards das
- * seções novas. Sobrescrevemos APENAS para nossas 3 seções para não regressar
- * o resto (Quem Somos, O que fazemos continuam centralizadas como antes). */
-
-#tecnologia.main.fullscreen,
-#localizacao.main.fullscreen,
-#sustentabilidade.main.fullscreen {
-    height: auto !important;
-    min-height: 100vh;
-    overflow: visible !important;
-    padding: 6em 0 8em !important;
+@keyframes rd-fade-in {
+    from { opacity: 0; }
+    to   { opacity: 1; }
 }
 
-#tecnologia.main.style2 .content,
-#localizacao.main.style2 .content,
-#sustentabilidade.main.style2 .content {
-    width: min(90%, 1100px) !important;
-    display: block !important;
-    margin: 0 auto !important;
-    text-align: left;
+#tecnologia .rd-secao__num,
+#tecnologia .rd-secao__title,
+#tecnologia .rd-secao__sub,
+#tecnologia .rd-secao__lead,
+#tecnologia .rd-secao__column--media,
+#tecnologia .rd-bloco,
+#localizacao .rd-secao__num,
+#localizacao .rd-secao__title,
+#localizacao .rd-secao__sub,
+#localizacao .rd-secao__lead,
+#localizacao .rd-secao__column--media,
+#localizacao .rd-bloco,
+#sustentabilidade .rd-secao__num,
+#sustentabilidade .rd-secao__title,
+#sustentabilidade .rd-secao__sub,
+#sustentabilidade .rd-secao__lead,
+#sustentabilidade .rd-secao__column--media,
+#sustentabilidade .rd-bloco {
+    animation: rd-rise 800ms cubic-bezier(0.2, 0, 0, 1) backwards;
 }
 
-#tecnologia.main.style2.left:after,  #tecnologia.main.style2.right:after,
-#localizacao.main.style2.left:after, #localizacao.main.style2.right:after,
-#sustentabilidade.main.style2.left:after, #sustentabilidade.main.style2.right:after {
-    display: none !important;
+.rd-secao__num     { animation-delay: 0ms !important; }
+.rd-secao__title   { animation-delay: 80ms !important; }
+.rd-secao__sub     { animation-delay: 160ms !important; }
+.rd-secao__lead    { animation-delay: 240ms !important; }
+.rd-secao__column--media { animation-delay: 320ms !important; }
+
+.rd-blocos-grid > .rd-bloco:nth-child(1) { animation-delay: 400ms !important; }
+.rd-blocos-grid > .rd-bloco:nth-child(2) { animation-delay: 480ms !important; }
+.rd-blocos-grid > .rd-bloco:nth-child(3) { animation-delay: 560ms !important; }
+.rd-blocos-grid > .rd-bloco:nth-child(4) { animation-delay: 640ms !important; }
+
+@media (prefers-reduced-motion: reduce) {
+    #tecnologia *, #localizacao *, #sustentabilidade * {
+        animation: none !important;
+        transition: none !important;
+    }
 }
 
-/* Garantir contraste e visibilidade dos ícones (estavam pequenos e sumindo
-   dentro do círculo verde). */
-.rd-bloco__icone {
-    font-size: 1.6rem !important;
-    color: var(--rd-color-accent, #c9a14a) !important;
-}
-
-.rd-bloco__icone .fa {
-    color: inherit !important;
-}
-
-/* ============ Mobile ============ */
+/* ============================================================
+ * 12. Mobile fine-tune
+ * ============================================================ */
 
 @media (max-width: 736px) {
-    .rd-blocos-grid {
-        grid-template-columns: 1fr;
-        gap: 1rem;
+    #tecnologia,
+    #localizacao,
+    #sustentabilidade {
+        padding: 4.25rem 0 5.5rem !important;
     }
+
+    .rd-secao__title { font-size: clamp(2rem, 9vw, 2.85rem); }
+    .rd-secao__num { font-size: 0.7rem; }
+    .rd-secao__num::after { flex-basis: 32px; }
+
+    .rd-figure img { aspect-ratio: 1 / 1; }
+    .rd-figure::before,
+    .rd-figure::after { width: 38px; height: 38px; }
+    .rd-figure figcaption {
+        bottom: 0.85rem;
+        left: 0.85rem;
+        font-size: 0.62rem;
+        padding: 0.4rem 0.7rem;
+    }
+
     .rd-bloco {
-        padding: 1.25rem;
+        padding: 1.15rem 0 1.15rem 1.15rem;
     }
-    .rd-filtros {
-        gap: 0.4rem;
-    }
-    .rd-filtros__label {
-        width: 100%;
-        margin-bottom: 0.25rem;
-    }
+
+    .rd-bloco__valor { font-size: 2.6rem; }
+    .rd-bloco__titulo { font-size: 1.18rem; }
+}
+
+@media (max-width: 430px) {
+    .rd-secao__title { font-size: 1.85rem; }
+    .rd-secao__sub   { font-size: 0.78rem; letter-spacing: 0.14em; }
+    .rd-secao__inner { padding: 0 1rem; }
 }

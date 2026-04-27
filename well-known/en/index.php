@@ -15,8 +15,9 @@ foreach ($stmt_secao->fetchAll(\PDO::FETCH_ASSOC) as $row) {
 	$secao[$row['slug']] = $row;
 }
 
-$blocos_tecnologia = secao_blocos_por_slug($conn, 'tecnologia');
-$blocos_localizacao = secao_blocos_por_slug($conn, 'localizacao');
+$blocos_tecnologia      = secao_blocos_por_slug($conn, 'tecnologia');
+$blocos_localizacao     = secao_blocos_por_slug($conn, 'localizacao');
+$blocos_sustentabilidade = secao_blocos_por_slug($conn, 'sustentabilidade');
 
 //CARREGAR INFORMAÇÕES DE CONTATO DO BANCO DE DADOS
 $sql = "SELECT * FROM contato";
@@ -229,6 +230,39 @@ if (!$stmt_categoria->execute()) {
 	</section>
 	<?php endif; ?>
 	<!-- END LOCALIZACAO -->
+
+
+
+	<!-- SEÇÃO sustentabilidade (A4) -->
+	<?php if (!empty($secao['sustentabilidade'])): ?>
+	<section id="sustentabilidade" class="main style2 right dark fullscreen">
+		<div class="content box style2">
+			<header>
+				<h2><?= htmlspecialchars($secao['sustentabilidade']['titulo_en'], ENT_QUOTES, 'UTF-8') ?></h2>
+				<?php if (!empty($secao['sustentabilidade']['subtitulo_en'])): ?>
+					<p class="rd-secao-subtitulo"><?= htmlspecialchars($secao['sustentabilidade']['subtitulo_en'], ENT_QUOTES, 'UTF-8') ?></p>
+				<?php endif; ?>
+			</header>
+			<?= $secao['sustentabilidade']['conteudo_en'] ?? '' ?>
+
+			<?php if (!empty($blocos_sustentabilidade)): ?>
+				<div class="rd-blocos-grid">
+					<?php foreach ($blocos_sustentabilidade as $b): ?>
+						<div class="rd-bloco">
+							<?php if (!empty($b['icone'])): ?>
+								<span class="rd-bloco__icone"><i class="fa <?= htmlspecialchars($b['icone'], ENT_QUOTES, 'UTF-8') ?>" aria-hidden="true"></i></span>
+							<?php endif; ?>
+							<h3 class="rd-bloco__titulo"><?= htmlspecialchars($b['titulo_en'], ENT_QUOTES, 'UTF-8') ?></h3>
+							<div class="rd-bloco__conteudo"><?= $b['conteudo_en'] ?></div>
+						</div>
+					<?php endforeach; ?>
+				</div>
+			<?php endif; ?>
+		</div>
+		<a href="#produtos" class="button style2 down anchored">Next</a>
+	</section>
+	<?php endif; ?>
+	<!-- END SUSTENTABILIDADE -->
 
 
 

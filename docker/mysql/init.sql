@@ -203,6 +203,34 @@ INSERT INTO secao_bloco (secao_id, ordem, icone, valor_destaque, valor_destaque_
  '<p>Participação de Varginha no total exportado pelo estado — maior cidade exportadora de MG.</p>',
  '<p>Varginha''s share of total exports from Minas Gerais — the state''s largest exporting city.</p>');
 
+-- Frente A4: seção Rastreabilidade & Sustentabilidade (4 pilares).
+INSERT INTO secao
+  (idsecao, slug, ordem, tipo, titulo, titulo_en, subtitulo, subtitulo_en, conteudo, conteudo_en) VALUES
+(7, 'sustentabilidade', 39, 'sustentabilidade',
+ 'Rastreabilidade & Sustentabilidade', 'Traceability & Sustainability',
+ 'Cadeia produtiva premium e desperdício zero',
+ 'Premium supply chain and zero waste',
+ '<p>Comprometimento com qualidade de classe mundial e responsabilidade ambiental: rastreabilidade desde a origem, certificações reconhecidas internacionalmente e práticas de economia circular ao longo de toda a cadeia produtiva. Em 2025, Varginha recebeu o <strong>Selo Cristal</strong> da Caixa Econômica Federal, reconhecimento de boas práticas ESG (ambiental, social e governança).</p>',
+ '<p>Commitment to world-class quality and environmental responsibility: traceability from origin, internationally recognized certifications and circular-economy practices across the supply chain. In 2025, Varginha received the <strong>Selo Cristal</strong> award from Caixa Econômica Federal — recognition of best ESG (environmental, social, governance) practices.</p>');
+
+INSERT INTO secao_bloco (secao_id, ordem, icone, titulo, titulo_en, conteudo, conteudo_en) VALUES
+(7, 1, 'fa-search',
+ 'Rastreabilidade de origem', 'Origin traceability',
+ '<p>Estudos da Epamig usam metabolômica e análise de isótopos para rastrear cafés, azeites e outros produtos de alto valor — agregando valor à origem geográfica.</p>',
+ '<p>Epamig research uses metabolomics and isotope analysis to trace coffee, oils and other high-value products — adding value to geographic origin.</p>'),
+(7, 2, 'fa-certificate',
+ 'Certificações premium', 'Premium certifications',
+ '<p>Práticas de colheita e pós-colheita (secagem e descanso adequados) posicionam o café da região no mercado de cafés especiais. Classificação eletrônica e separação por peneiras no Porto Seco garantem que apenas os melhores grãos sejam exportados.</p>',
+ '<p>Harvest and post-harvest practices (proper drying and resting) position the region''s coffee in the specialty coffee market. Electronic grading and sieve sorting at the dry port ensure only the best beans are exported.</p>'),
+(7, 3, 'fa-recycle',
+ 'Economia circular', 'Circular economy',
+ '<p>Plano Municipal de Gestão Integrada de Resíduos Sólidos (PMGIRS), iluminação LED, lanternins para luz natural e otimização do uso de água nas instalações industriais e logísticas.</p>',
+ '<p>Municipal Integrated Solid Waste Management Plan (PMGIRS), LED lighting, skylights for natural illumination and water-use optimization across industrial and logistics facilities.</p>'),
+(7, 4, 'fa-leaf',
+ 'Selo Cristal ESG (2025)', 'Selo Cristal ESG (2025)',
+ '<p>Reconhecimento da Caixa Econômica Federal por boas práticas ambientais, sociais e de governança. Programas locais incluem "Varginha Sustentável", "Lixo Zero" e "Junho Verde".</p>',
+ '<p>Award by Caixa Econômica Federal for environmental, social and governance best practices. Local programs include "Varginha Sustentável", "Lixo Zero" and "Junho Verde".</p>');
+
 -- Único registro de contato (a tabela é singleton no app).
 INSERT INTO contato (idcontato, endereco, telefone1, telefone2, email) VALUES
 (1, 'Rua Exemplo, 100 — Centro, Cidade/UF, CEP 00000-000',

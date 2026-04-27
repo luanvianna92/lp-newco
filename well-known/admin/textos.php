@@ -1,21 +1,21 @@
-<?php 
+<?php
 header ('Content-type: text/html; charset=UTF-8');
-//INICIA A SESSÃO
 session_start();
-//CONECTA COM O BANCO DE DADOS
 require_once '../database.php';
-//VERIFICA SE O ADMIN ESTÁ LOGADO
+
 if (!isset($_SESSION['admin'])) {
     header("Location: index.php");
 }
-//VERIFICA SE HÁ MENSAGEM PARA EXIBIR
 if (isset($_SESSION['retornoEdit'])) {
     echo '<script type="text/javascript">alert("'.$_SESSION['retornoEdit'].'");</script>';
     echo '<script>window.location.reload();</script>';
 }
-//LIMPA A SESSÃO DE MENSAGEM
 unset($_SESSION['retornoEdit']);
 
+// Frente A5: lista de seções vem do banco (`secao`), não mais hardcoded.
+$stmt_secoes = $conn->prepare("SELECT idsecao, titulo FROM secao WHERE ativo = 1 ORDER BY ordem ASC");
+$stmt_secoes->execute();
+$secoes_admin = $stmt_secoes->fetchAll(PDO::FETCH_ASSOC);
 ?>
 
 <!DOCTYPE html>
@@ -72,40 +72,16 @@ unset($_SESSION['retornoEdit']);
                 </div>
 
                 <div class="row">
-
-                 <div class="col-sm-12 col-md-6 mbottom-minus">
-                     <a href="#modal_texto" class="texto_edit" id="1">
-                        <div class="dashboard-div-wrapper bk-dark-blue botao_link">
-                            <h4>Início</h4>
+                    <?php foreach ($secoes_admin as $sec): ?>
+                        <div class="col-sm-12 col-md-6 mbottom-minus">
+                            <a href="#modal_texto" class="texto_edit" id="<?= (int) $sec['idsecao'] ?>">
+                                <div class="dashboard-div-wrapper bk-dark-blue botao_link">
+                                    <h4><?= htmlspecialchars($sec['titulo'], ENT_QUOTES, 'UTF-8') ?></h4>
+                                </div>
+                            </a>
                         </div>
-                    </a>
+                    <?php endforeach; ?>
                 </div>
-
-                <div class="col-sm-12 col-md-6 mbottom-minus">
-                    <a href="#modal_texto" class="texto_edit" id="2">
-                        <div class="dashboard-div-wrapper bk-dark-blue botao_link">
-                            <h4>Quem somos</h4>
-                        </div>
-                    </a>
-                </div>
-
-                <div class="col-sm-12 col-md-6 mbottom-minus">
-                    <a href="#modal_texto" class="texto_edit" id="3">
-                        <div class="dashboard-div-wrapper bk-dark-blue botao_link">
-                            <h4>O que fazemos</h4>
-                        </div>
-                    </a>
-                </div>
-
-                <div class="col-sm-12 col-md-6 mbottom-minus">
-                    <a href="#modal_texto" class="texto_edit" id="4">
-                        <div class="dashboard-div-wrapper bk-dark-blue botao_link">
-                            <h4>Produtos</h4>
-                        </div>
-                    </a>
-                </div>
-
-            </div>
         </div>
     </div>
     <!-- /END ÁREA PARA ALTERAR TEXTOS -->

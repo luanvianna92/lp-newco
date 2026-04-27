@@ -3,15 +3,15 @@ header ('Content-type: text/html; charset=UTF-8');
 //CONECTA COM O BANCO DE DADOS
 require_once '../database.php';
 
-//CARREGAR PRODUTOS E CATEGORIAS DO BANCO DE DADOS
-$sql = "SELECT * FROM texto";
-$stmt_texto = $conn->prepare($sql);
-if ($stmt_texto->execute()) {
-	$texto = $stmt_texto->fetchAll(\PDO::FETCH_ASSOC);
+//CARREGAR SEÇÕES INSTITUCIONAIS DO BANCO DE DADOS (slug => row)
+$sql = "SELECT * FROM secao WHERE ativo = 1 ORDER BY ordem ASC";
+$stmt_secao = $conn->prepare($sql);
+if (!$stmt_secao->execute()) {
+	die('Error loading sections.');
 }
-else {
-	echo $stmt_texto->error_info();
-	die();
+$secao = [];
+foreach ($stmt_secao->fetchAll(\PDO::FETCH_ASSOC) as $row) {
+	$secao[$row['slug']] = $row;
 }
 
 //CARREGAR INFORMAÇÕES DE CONTATO DO BANCO DE DADOS
@@ -70,14 +70,14 @@ if (!$stmt_categoria->execute()) {
 	</header>
 
 
-	<!-- ARRAY PHP POSIÇÃO 0 = INÍCIO -->
+	<!-- SEÇÃO inicio -->
 	<!-- Intro -->
 	<section id="intro" class="main style1 dark fullscreen">
 		<div class="content container 75%">
 			<header>
 				<h2><img src="../images/logo.png"></h2>
 			</header>
-			<?php echo $texto[0]["texto_en"]; ?>
+			<?php echo $secao['inicio']['conteudo_en'] ?? ''; ?>
 			<footer>
 				<a href="#quem" class="button style2 down">Continue</a>
 			</footer>
@@ -86,20 +86,20 @@ if (!$stmt_categoria->execute()) {
 
 
 
-	<!-- ARRAY PHP POSIÇÃO 1 = QUEM SOMOS -->
+	<!-- SEÇÃO quem-somos -->
 	<!-- quem -->
 	<section id="quem" class="main style2 left dark fullscreen">
 		<div class="content box style2">
 			<header>
-				<h2><?php echo $texto[1]["titulo_en"]; ?></h2>
+				<h2><?php echo $secao['quem-somos']['titulo_en'] ?? ''; ?></h2>
 			</header>
-			<?php echo $texto[1]["texto_en"];
-			if (!empty(trim($texto[1]["texto_modal_en"]))) {		//VERIFICA SE EXISTE TEXTO EXTRA PARA EXIBIR OU NÃO O MODAL
+			<?php echo $secao['quem-somos']['conteudo_en'] ?? '';
+			if (!empty(trim($secao['quem-somos']['conteudo_modal_en'] ?? ''))) {
 				echo '<span class="abrirModal" name="modal1"> Learn more.</span>';
 			}
 			 ?>
 		</div>
-		<a href="#oque" class="button style2 down anchored">Próximo</a>
+		<a href="#oque" class="button style2 down anchored">Next</a>
 	</section>
 
 	<!-- MODAL -->
@@ -109,10 +109,10 @@ if (!$stmt_categoria->execute()) {
 		<div class="modal-content">
 			<div class="modal-header">
 				<span class="close">×</span>
-				<h2><?php echo $texto[1]["titulo_en"]; ?></h2>
+				<h2><?php echo $secao['quem-somos']['titulo_en'] ?? ''; ?></h2>
 			</div>
 			<div class="modal-body">
-				<?php echo $texto[1]["texto_modal_en"]; ?>
+				<?php echo $secao['quem-somos']['conteudo_modal_en'] ?? ''; ?>
 			</div>
 		</div>
 
@@ -122,20 +122,20 @@ if (!$stmt_categoria->execute()) {
 
 
 
-	<!-- ARRAY PHP POSIÇÃO 2 = O QUE FAZEMOS -->
+	<!-- SEÇÃO oque-fazemos -->
 	<!-- oque -->
 	<section id="oque" class="main style2 right dark fullscreen">
 		<div class="content box style2">
 			<header>
-				<h2><?php echo $texto[2]["titulo_en"]; ?></h2>
+				<h2><?php echo $secao['oque-fazemos']['titulo_en'] ?? ''; ?></h2>
 			</header>
-			<?php echo $texto[2]["texto_en"];
-			if (!empty(trim($texto[2]["texto_modal_en"]))) {			//VERIFICA SE EXISTE TEXTO EXTRA PARA EXIBIR OU NÃO O MODAL
-				echo '<span class="abrirModal" name="modal2"> Saiba mais.</span>';
+			<?php echo $secao['oque-fazemos']['conteudo_en'] ?? '';
+			if (!empty(trim($secao['oque-fazemos']['conteudo_modal_en'] ?? ''))) {
+				echo '<span class="abrirModal" name="modal2"> Learn more.</span>';
 			}
 			 ?>
 		</div>
-		<a href="#produtos" class="button style2 down anchored">Próximo</a>
+		<a href="#produtos" class="button style2 down anchored">Next</a>
 	</section>
 
 	<!-- MODAL -->
@@ -145,10 +145,10 @@ if (!$stmt_categoria->execute()) {
 		<div class="modal-content">
 			<div class="modal-header">
 				<span class="close">×</span>
-				<h2><?php echo $texto[2]["titulo_en"]; ?></h2>
+				<h2><?php echo $secao['oque-fazemos']['titulo_en'] ?? ''; ?></h2>
 			</div>
 			<div class="modal-body">
-				<?php echo $texto[2]["texto_modal_en"]; ?>
+				<?php echo $secao['oque-fazemos']['conteudo_modal_en'] ?? ''; ?>
 			</div>
 		</div>
 
@@ -158,16 +158,16 @@ if (!$stmt_categoria->execute()) {
 
 
 
-	<!-- ARRAY PHP POSIÇÃO 3 = PRODUTOS -->
+	<!-- SEÇÃO produtos -->
 	<!-- produtos -->
 	<section id="produtos" class="main style3 primary">
 		<div class="content container">
 			<header>
-				<h2><?php echo $texto[3]["titulo_en"]; ?></h2>
+				<h2><?php echo $secao['produtos']['titulo_en'] ?? ''; ?></h2>
 			</header>
-			<?php echo $texto[3]["texto_en"];
-			if (!empty(trim($texto[3]["texto_modal_en"]))) {			//VERIFICA SE EXISTE TEXTO EXTRA PARA EXIBIR OU NÃO O MODAL
-				echo '<span class="abrirModal" name="modal3"> Saiba mais.</span>';
+			<?php echo $secao['produtos']['conteudo_en'] ?? '';
+			if (!empty(trim($secao['produtos']['conteudo_modal_en'] ?? ''))) {
+				echo '<span class="abrirModal" name="modal3"> Learn more.</span>';
 			}
 			?>
 
@@ -203,10 +203,10 @@ if (!$stmt_categoria->execute()) {
 		<div class="modal-content">
 			<div class="modal-header">
 				<span class="close">×</span>
-				<h2><?php echo $texto[3]["titulo_en"]; ?></h2>
+				<h2><?php echo $secao['produtos']['titulo_en'] ?? ''; ?></h2>
 			</div>
 			<div class="modal-body">
-				<?php echo $texto[3]["texto_modal_en"]; ?>
+				<?php echo $secao['produtos']['conteudo_modal_en'] ?? ''; ?>
 			</div>
 		</div>
 	</div>

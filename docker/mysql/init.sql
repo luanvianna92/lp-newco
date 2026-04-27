@@ -1,17 +1,56 @@
 -- Schema reconstruído por engenharia reversa das queries de well-known/**.
--- Tipos e tamanhos são heurísticos — ajustaremos quando tivermos o dump real de produção.
+-- Frente A5: tabela `texto` substituída por `secao` (modelo flexível).
 SET NAMES utf8mb4;
 SET time_zone = 'America/Sao_Paulo';
 
-CREATE TABLE texto (
-  idtexto INT UNSIGNED PRIMARY KEY AUTO_INCREMENT,
+-- ============ SEÇÕES INSTITUCIONAIS ============
+-- Substitui a antiga `texto` (4 linhas fixas, acessadas por posição).
+-- `secao` permite ordenar, ativar/desativar, criar novas seções sem mexer em código.
+CREATE TABLE secao (
+  idsecao INT UNSIGNED PRIMARY KEY AUTO_INCREMENT,
+  slug VARCHAR(60) NOT NULL,
+  ordem SMALLINT UNSIGNED NOT NULL DEFAULT 0,
+  tipo VARCHAR(40) NOT NULL DEFAULT 'texto',
+  -- 'hero' | 'texto' | 'galeria' | 'tecnologia' | 'kpis' | 'sustentabilidade' | etc.
   titulo VARCHAR(255) NOT NULL DEFAULT '',
   titulo_en VARCHAR(255) NOT NULL DEFAULT '',
-  texto TEXT,
-  texto_en TEXT,
-  texto_modal TEXT,
-  texto_modal_en TEXT
+  subtitulo VARCHAR(500) DEFAULT NULL,
+  subtitulo_en VARCHAR(500) DEFAULT NULL,
+  conteudo LONGTEXT,
+  conteudo_en LONGTEXT,
+  conteudo_modal LONGTEXT,
+  conteudo_modal_en LONGTEXT,
+  imagem_capa VARCHAR(500) DEFAULT NULL,
+  cta_texto VARCHAR(120) DEFAULT NULL,
+  cta_texto_en VARCHAR(120) DEFAULT NULL,
+  cta_url VARCHAR(500) DEFAULT NULL,
+  ativo TINYINT UNSIGNED NOT NULL DEFAULT 1,
+  criado_em DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  atualizado_em DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  UNIQUE KEY uniq_secao_slug (slug),
+  KEY idx_secao_ordem (ativo, ordem)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- Sub-blocos repetidos dentro de uma seção (3 benefícios do spray-drying,
+-- 4 KPIs do Porto Seco, etc.). Permite renderização tipo "grid de cards".
+CREATE TABLE secao_bloco (
+  idbloco INT UNSIGNED PRIMARY KEY AUTO_INCREMENT,
+  secao_id INT UNSIGNED NOT NULL,
+  ordem SMALLINT UNSIGNED NOT NULL DEFAULT 0,
+  icone VARCHAR(60) DEFAULT NULL,         -- ex: "fa-thermometer-half"
+  valor_destaque VARCHAR(120) DEFAULT NULL,    -- ex: "R$ 25 bi", "65%"
+  valor_destaque_en VARCHAR(120) DEFAULT NULL,
+  titulo VARCHAR(255) NOT NULL DEFAULT '',
+  titulo_en VARCHAR(255) NOT NULL DEFAULT '',
+  conteudo TEXT,
+  conteudo_en TEXT,
+  ativo TINYINT UNSIGNED NOT NULL DEFAULT 1,
+  KEY idx_bloco_secao (secao_id, ordem),
+  CONSTRAINT fk_bloco_secao FOREIGN KEY (secao_id)
+    REFERENCES secao (idsecao) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- ============ DEMAIS TABELAS (intactas em relação ao schema anterior) ============
 
 CREATE TABLE contato (
   idcontato INT UNSIGNED PRIMARY KEY AUTO_INCREMENT,
@@ -82,23 +121,28 @@ CREATE TABLE log_produto (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- ============ SEEDS ============
--- Os 4 textos da home (index.php usa $texto[0..3] em ordem natural).
--- Conteúdo é placeholder; será substituído na fase "atualização de conteúdo".
-INSERT INTO texto (idtexto, titulo, titulo_en, texto, texto_en, texto_modal, texto_modal_en) VALUES
-(1, 'Início', 'Home',
+
+-- Seções da home (slugs estáveis usados pelo template index.php).
+INSERT INTO secao
+  (idsecao, slug, ordem, tipo, titulo, titulo_en, conteudo, conteudo_en, conteudo_modal, conteudo_modal_en) VALUES
+(1, 'inicio', 10, 'hero',
+ 'Início', 'Home',
  '<p>Bem-vindo à Newco Brazil. Indústria de produtos funcionais.</p>',
  '<p>Welcome to Newco Brazil. Functional products industry.</p>',
  '', ''),
-(2, 'Quem Somos', 'About Us',
+(2, 'quem-somos', 20, 'texto',
+ 'Quem Somos', 'About Us',
  '<p>A Newco Brazil é referência em soluções industriais de produtos funcionais para o mercado nacional e internacional.</p>',
  '<p>Newco Brazil is a reference in industrial solutions of functional products for the national and international market.</p>',
  '<p>Texto adicional sobre nossa história, missão, visão e valores.</p>',
  '<p>Additional text about our history, mission, vision and values.</p>'),
-(3, 'O que fazemos', 'What we do',
+(3, 'oque-fazemos', 30, 'texto',
+ 'O que fazemos', 'What we do',
  '<p>Desenvolvemos e produzimos adoçantes, frutas processadas, óleos especiais e ingredientes funcionais para a indústria alimentícia.</p>',
  '<p>We develop and produce sweeteners, processed fruits, special oils and functional ingredients for the food industry.</p>',
  '', ''),
-(4, 'Produtos', 'Products',
+(4, 'produtos', 40, 'galeria',
+ 'Produtos', 'Products',
  '<p>Conheça nossas categorias de produtos clicando nas imagens abaixo.</p>',
  '<p>Discover our product categories by clicking on the images below.</p>',
  '', '');
@@ -109,14 +153,14 @@ INSERT INTO contato (idcontato, endereco, telefone1, telefone2, email) VALUES
  '+55 (35) 9989-6978', '+55 (35) 9126-9835', 'contato@newcobrazil.com');
 
 -- Categorias de produtos.
+-- IDs alinhados com o código legado em well-known/en/{adocantes,frutas,funcionais,oleos}.php:
+-- 1 = Frutas e Vegetais, 2 = Adoçantes, 3 = Outros Funcionais, 4 = Óleos.
 INSERT INTO categoria (idcategoria, nome_cat, nome_cat_en, capa, status) VALUES
-(1, 'Adoçantes', 'Sweeteners', '01.jpg', 0),
-(2, 'Frutas', 'Fruits', '02.jpg', 0),
-(3, 'Óleos', 'Oils', '03.jpg', 0),
-(4, 'Funcionais', 'Functional', '04.jpg', 0);
+(1, 'Frutas e Vegetais', 'Fruits and Vegetables', '01.jpg', 0),
+(2, 'Adoçantes', 'Sweeteners', '02.jpg', 0),
+(3, 'Outros Funcionais', 'Other Functional Products', '03.jpg', 0),
+(4, 'Óleos', 'Oils', '04.jpg', 0);
 
--- Produtos por categoria. O campo `short` precisa ser único e válido como ID HTML
--- (produto.php usa o valor em document.getElementById e na URL do modal).
 INSERT INTO produto
   (nome, nome_en, short, descricao, descricao_en, funcionalidade, funcionalidade_en,
    imagem, banner, categoria_idcategoria, status) VALUES
@@ -125,28 +169,27 @@ INSERT INTO produto
  '<p>Natural sweetener extracted from monk fruit.</p>',
  '<p>Zero calorias, alto poder adoçante.</p>',
  '<p>Zero calories, high sweetening power.</p>',
- 'monge.jpg', 'adocante_banner.jpg', 1, 0),
+ 'monge.jpg', 'adocante_banner.jpg', 2, 0),
 ('Cana de Açúcar', 'Sugar Cane', 'prod-cana',
  '<p>Adoçante derivado da cana de açúcar.</p>',
  '<p>Sweetener derived from sugar cane.</p>',
  '<p>Fonte natural de energia.</p>',
  '<p>Natural source of energy.</p>',
- 'cana.jpg', 'adocante_banner.jpg', 1, 0),
+ 'cana.jpg', 'adocante_banner.jpg', 2, 0),
 ('Acerola', 'Acerola', 'prod-acerola',
  '<p>Acerola in natura, rica em vitamina C.</p>',
  '<p>Acerola in natura, rich in vitamin C.</p>',
  '<p>Antioxidante e fortalecedor do sistema imunológico.</p>',
  '<p>Antioxidant and immune system booster.</p>',
- 'Acerola-basket.jpg', 'acerola-info.jpg', 2, 0),
+ 'Acerola-basket.jpg', 'acerola-info.jpg', 1, 0),
 ('Maracujá', 'Passion Fruit', 'prod-maracuja',
  '<p>Maracujá tropical brasileiro.</p>',
  '<p>Brazilian tropical passion fruit.</p>',
  '<p>Calmante natural e fonte de fibras.</p>',
  '<p>Natural calmer and fiber source.</p>',
- 'passionfruit.jpg', NULL, 2, 0);
+ 'passionfruit.jpg', NULL, 1, 0);
 
 -- Admin master para acesso local.
--- Login: admin  |  Senha: admin123  (somente desenvolvimento — trocar antes de qualquer ambiente compartilhado).
--- Hash bcrypt de "admin123" gerado via password_hash(..., PASSWORD_BCRYPT).
+-- Login: admin  |  Senha: admin123  (apenas dev — trocar antes de qualquer ambiente compartilhado).
 INSERT INTO admin (idadmin, login, senha, permissao, status) VALUES
 (1, 'admin', '$2y$10$5E9xn7VS97KIunTuPCQ81OVSDDfI8P3Z0jqecmA7Vev0IXimyKLES', 0, 0);

@@ -17,6 +17,7 @@ foreach ($stmt_secao->fetchAll(PDO::FETCH_ASSOC) as $row) {
 
 // Sub-blocos das seções com tipo "tecnologia/kpis/sustentabilidade"
 $blocos_tecnologia = secao_blocos_por_slug($conn, 'tecnologia');
+$blocos_localizacao = secao_blocos_por_slug($conn, 'localizacao');
 
 //CARREGAR INFORMAÇÕES DE CONTATO DO BANCO DE DADOS
 $sql = "SELECT * FROM contato";
@@ -190,6 +191,41 @@ if (!$stmt_categoria->execute()) {
 	</section>
 	<?php endif; ?>
 	<!-- END TECNOLOGIA -->
+
+
+	<!-- SEÇÃO localizacao (frente A3: Porto Seco) -->
+	<?php if (!empty($secao['localizacao'])): ?>
+	<section id="localizacao" class="main style2 left dark fullscreen">
+		<div class="content box style2">
+			<header>
+				<h2><?= htmlspecialchars($secao['localizacao']['titulo'], ENT_QUOTES, 'UTF-8') ?></h2>
+				<?php if (!empty($secao['localizacao']['subtitulo'])): ?>
+					<p class="rd-secao-subtitulo"><?= htmlspecialchars($secao['localizacao']['subtitulo'], ENT_QUOTES, 'UTF-8') ?></p>
+				<?php endif; ?>
+			</header>
+			<?= $secao['localizacao']['conteudo'] ?? '' ?>
+
+			<?php if (!empty($blocos_localizacao)): ?>
+				<div class="rd-blocos-grid rd-blocos-grid--kpis">
+					<?php foreach ($blocos_localizacao as $b): ?>
+						<div class="rd-bloco rd-bloco--kpi">
+							<?php if (!empty($b['icone'])): ?>
+								<span class="rd-bloco__icone"><i class="fa <?= htmlspecialchars($b['icone'], ENT_QUOTES, 'UTF-8') ?>" aria-hidden="true"></i></span>
+							<?php endif; ?>
+							<?php if (!empty($b['valor_destaque'])): ?>
+								<div class="rd-bloco__valor"><?= htmlspecialchars($b['valor_destaque'], ENT_QUOTES, 'UTF-8') ?></div>
+							<?php endif; ?>
+							<h3 class="rd-bloco__titulo"><?= htmlspecialchars($b['titulo'], ENT_QUOTES, 'UTF-8') ?></h3>
+							<div class="rd-bloco__conteudo"><?= $b['conteudo'] ?></div>
+						</div>
+					<?php endforeach; ?>
+				</div>
+			<?php endif; ?>
+		</div>
+		<a href="#produtos" class="button style2 down anchored">Próximo</a>
+	</section>
+	<?php endif; ?>
+	<!-- END LOCALIZACAO -->
 
 
 	<!-- SEÇÃO produtos -->

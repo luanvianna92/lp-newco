@@ -171,6 +171,38 @@ INSERT INTO secao_bloco (secao_id, ordem, icone, titulo, titulo_en, conteudo, co
  '<p>Produz um pó esférico e uniforme que se reidrata rapidamente, mantendo a qualidade original do alimento líquido.</p>',
  '<p>Produces a uniform spherical powder that rehydrates quickly, maintaining the original quality of the liquid food.</p>');
 
+-- Frente A3: seção Localização & Logística (Porto Seco Sul de Minas) com 4 KPIs.
+INSERT INTO secao
+  (idsecao, slug, ordem, tipo, titulo, titulo_en, subtitulo, subtitulo_en, conteudo, conteudo_en) VALUES
+(6, 'localizacao', 37, 'kpis',
+ 'Localização & Logística', 'Location & Logistics',
+ 'Porto Seco Sul de Minas — Varginha/MG',
+ 'Sul de Minas Dry Port — Varginha/MG',
+ '<p>Varginha (MG) é um dos principais hubs logísticos do Brasil. O <strong>Porto Seco Sul de Minas</strong>, estrutura alfandegada com presença da Receita Federal, Receita Estadual e Anvisa, garante agilidade e segurança para exportação e importação. Localizada estrategicamente, a cidade está em um raio de 400 km que concentra 65% do PIB nacional, conectando o Sul de Minas aos principais portos e rodovias do país.</p>',
+ '<p>Varginha (MG) is one of Brazil''s main logistics hubs. The <strong>Sul de Minas Dry Port</strong>, a customs facility hosting Federal Revenue, State Revenue and Anvisa offices, ensures speed and security for exports and imports. Strategically located, the city sits within a 400 km radius that concentrates 65% of Brazil''s GDP, connecting Sul de Minas to the country''s main ports and highways.</p>');
+
+INSERT INTO secao_bloco (secao_id, ordem, icone, valor_destaque, valor_destaque_en, titulo, titulo_en, conteudo, conteudo_en) VALUES
+(6, 1, 'fa-map-marker',
+ '65% do PIB', '65% of GDP',
+ 'Localização estratégica', 'Strategic location',
+ '<p>Em um raio de 400 km, a região de Varginha concentra 65% do PIB nacional, próxima a São Paulo, Campinas, Rio de Janeiro e Belo Horizonte.</p>',
+ '<p>Within a 400 km radius, the Varginha region concentrates 65% of Brazil''s GDP, close to São Paulo, Campinas, Rio de Janeiro and Belo Horizonte.</p>'),
+(6, 2, 'fa-truck',
+ 'R$ 25 bi/ano', 'R$ 25B/year',
+ 'Volume movimentado', 'Cargo throughput',
+ '<p>Movimentação anual do Porto Seco em cargas industriais e exportação de café, atendendo mais de 500 empresas.</p>',
+ '<p>Annual cargo throughput at the dry port — industrial freight and coffee exports, serving 500+ companies.</p>'),
+(6, 3, 'fa-globe',
+ 'US$ 2 bi', 'US$ 2B',
+ 'Exportações em 2025', '2025 exports',
+ '<p>Exportações de Varginha em 2025, lideradas por café e produtos premium da indústria.</p>',
+ '<p>Varginha exports in 2025, led by coffee and premium industrial products.</p>'),
+(6, 4, 'fa-trophy',
+ '~8%', '~8%',
+ 'Liderança em Minas Gerais', 'Leader in Minas Gerais',
+ '<p>Participação de Varginha no total exportado pelo estado — maior cidade exportadora de MG.</p>',
+ '<p>Varginha''s share of total exports from Minas Gerais — the state''s largest exporting city.</p>');
+
 -- Único registro de contato (a tabela é singleton no app).
 INSERT INTO contato (idcontato, endereco, telefone1, telefone2, email) VALUES
 (1, 'Rua Exemplo, 100 — Centro, Cidade/UF, CEP 00000-000',

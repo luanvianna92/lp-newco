@@ -243,6 +243,47 @@
 .rd-ficha-form__msg--ok    { color: #1d4d3a; }
 .rd-ficha-form__msg--erro  { color: #b32c2c; }
 
+/* ============ Frente C2: fix de cortes nas seções fullscreen ============
+ * O template Big Picture (.main.fullscreen) tem height:100% + overflow:hidden e
+ * centraliza verticalmente via .style2:after, o que corta o grid de cards das
+ * seções novas. Sobrescrevemos APENAS para nossas 3 seções para não regressar
+ * o resto (Quem Somos, O que fazemos continuam centralizadas como antes). */
+
+#tecnologia.main.fullscreen,
+#localizacao.main.fullscreen,
+#sustentabilidade.main.fullscreen {
+    height: auto !important;
+    min-height: 100vh;
+    overflow: visible !important;
+    padding: 6em 0 8em !important;
+}
+
+#tecnologia.main.style2 .content,
+#localizacao.main.style2 .content,
+#sustentabilidade.main.style2 .content {
+    width: min(90%, 1100px) !important;
+    display: block !important;
+    margin: 0 auto !important;
+    text-align: left;
+}
+
+#tecnologia.main.style2.left:after,  #tecnologia.main.style2.right:after,
+#localizacao.main.style2.left:after, #localizacao.main.style2.right:after,
+#sustentabilidade.main.style2.left:after, #sustentabilidade.main.style2.right:after {
+    display: none !important;
+}
+
+/* Garantir contraste e visibilidade dos ícones (estavam pequenos e sumindo
+   dentro do círculo verde). */
+.rd-bloco__icone {
+    font-size: 1.6rem !important;
+    color: var(--rd-color-accent, #c9a14a) !important;
+}
+
+.rd-bloco__icone .fa {
+    color: inherit !important;
+}
+
 /* ============ Mobile ============ */
 
 @media (max-width: 736px) {

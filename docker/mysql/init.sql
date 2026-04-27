@@ -201,7 +201,7 @@ INSERT INTO secao
  '<p>Spray-drying (atomization drying) is one of the most efficient and widely used methods in the food and pharmaceutical industries for transforming liquids (solutions, emulsions or suspensions) into fine, dry powder. This technology is recognized for preserving the high quality of ingredients and is ideal for heat-sensitive products: drying occurs almost instantly, minimizing thermal degradation and ensuring the maintenance of nutritional and organoleptic properties (flavor, aroma and color) of the in natura product.</p>');
 
 INSERT INTO secao_bloco (secao_id, ordem, icone, titulo, titulo_en, conteudo, conteudo_en) VALUES
-(5, 1, 'fa-thermometer-half',
+(5, 1, 'fa-fire',
  'Baixo dano térmico', 'Low thermal damage',
  '<p>Embora o ar de entrada seja quente, o tempo de exposição é tão curto e a evaporação da água tão rápida que a temperatura da partícula seca não atinge níveis que causem degradação do produto.</p>',
  '<p>Although the inlet air is hot, exposure time is so short and water evaporation so rapid that the dried particle temperature never reaches levels that cause product degradation.</p>'),

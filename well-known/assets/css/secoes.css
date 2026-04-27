@@ -163,6 +163,86 @@
     display: none !important;
 }
 
+/* ============ Frente A2: form de download de ficha técnica ============ */
+
+.rd-ficha-form-wrapper {
+    margin-top: 1.5rem;
+    padding: 1.25rem;
+    background: rgba(29, 77, 58, 0.05);
+    border-left: 3px solid var(--rd-color-primary);
+    border-radius: 0 8px 8px 0;
+}
+
+.rd-ficha-form-wrapper h4 {
+    margin: 0 0 0.5rem 0;
+    color: var(--rd-color-primary);
+    font-size: 1.05rem;
+    font-weight: 600;
+}
+
+.rd-ficha-form-wrapper p {
+    margin: 0 0 0.85rem 0;
+    color: var(--rd-color-text-muted);
+    font-size: 0.9rem;
+}
+
+.rd-ficha-form {
+    display: grid;
+    gap: 0.6rem;
+}
+
+.rd-ficha-form input[type="text"],
+.rd-ficha-form input[type="email"] {
+    padding: 0.55rem 0.85rem;
+    border: 1px solid var(--rd-color-border);
+    border-radius: 6px;
+    font-size: 0.92rem;
+    font-family: inherit;
+    background: #fff;
+    color: var(--rd-color-text);
+    transition: border-color 200ms ease;
+}
+
+.rd-ficha-form input:focus {
+    outline: none;
+    border-color: var(--rd-color-primary);
+}
+
+.rd-ficha-form button {
+    padding: 0.65rem 1rem;
+    background: var(--rd-color-primary);
+    color: #fff;
+    border: none;
+    border-radius: 6px;
+    font-weight: 600;
+    font-size: 0.92rem;
+    cursor: pointer;
+    transition: background 200ms ease, transform 200ms ease;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+}
+
+.rd-ficha-form button:hover {
+    background: var(--rd-color-primary-dark);
+    transform: translateY(-1px);
+}
+
+.rd-ficha-form button:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+}
+
+.rd-ficha-form__msg {
+    margin-top: 0.5rem;
+    font-size: 0.88rem;
+}
+
+.rd-ficha-form__msg--ok    { color: #1d4d3a; }
+.rd-ficha-form__msg--erro  { color: #b32c2c; }
+
 /* ============ Mobile ============ */
 
 @media (max-width: 736px) {

@@ -79,12 +79,31 @@ CREATE TABLE produto (
   funcionalidade_en TEXT,
   imagem VARCHAR(500) DEFAULT NULL,
   banner VARCHAR(500) DEFAULT NULL,
+  ficha_pdf VARCHAR(500) DEFAULT NULL,         -- frente A2: PDF da ficha técnica (em admin/fichas/)
   categoria_idcategoria INT UNSIGNED NOT NULL,
   status TINYINT UNSIGNED NOT NULL DEFAULT 0,
   UNIQUE KEY uniq_produto_short (short),
   KEY idx_produto_categoria (categoria_idcategoria),
   CONSTRAINT fk_produto_categoria FOREIGN KEY (categoria_idcategoria)
     REFERENCES categoria (idcategoria) ON DELETE RESTRICT ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- Frente A2: registro de cada solicitação de download de ficha técnica.
+-- Permite à Newco saber quem pediu o quê (lead generation B2B).
+CREATE TABLE download_request (
+  iddownload INT UNSIGNED PRIMARY KEY AUTO_INCREMENT,
+  produto_id INT UNSIGNED NOT NULL,
+  email VARCHAR(255) NOT NULL,
+  nome_solicitante VARCHAR(255) DEFAULT NULL,
+  empresa VARCHAR(255) DEFAULT NULL,
+  ip VARCHAR(45) DEFAULT NULL,
+  user_agent VARCHAR(500) DEFAULT NULL,
+  idioma CHAR(2) DEFAULT NULL,                 -- 'pt' ou 'en'
+  criado_em DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  KEY idx_download_produto (produto_id, criado_em),
+  KEY idx_download_email (email),
+  CONSTRAINT fk_download_produto FOREIGN KEY (produto_id)
+    REFERENCES produto (idproduto) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- Frente C1: segmentação por aplicação (alimentício, nutracêutico, etc.).
@@ -271,31 +290,31 @@ INSERT INTO categoria (idcategoria, nome_cat, nome_cat_en, capa, status) VALUES
 
 INSERT INTO produto
   (nome, nome_en, short, descricao, descricao_en, funcionalidade, funcionalidade_en,
-   imagem, banner, categoria_idcategoria, status) VALUES
+   imagem, banner, ficha_pdf, categoria_idcategoria, status) VALUES
 ('Monk Fruit', 'Monk Fruit', 'prod-monk',
  '<p>Adoçante natural extraído do monk fruit.</p>',
  '<p>Natural sweetener extracted from monk fruit.</p>',
  '<p>Zero calorias, alto poder adoçante.</p>',
  '<p>Zero calories, high sweetening power.</p>',
- 'monge.jpg', 'adocante_banner.jpg', 2, 0),
+ 'monge.jpg', 'adocante_banner.jpg', 'placeholder.pdf', 2, 0),
 ('Cana de Açúcar', 'Sugar Cane', 'prod-cana',
  '<p>Adoçante derivado da cana de açúcar.</p>',
  '<p>Sweetener derived from sugar cane.</p>',
  '<p>Fonte natural de energia.</p>',
  '<p>Natural source of energy.</p>',
- 'cana.jpg', 'adocante_banner.jpg', 2, 0),
+ 'cana.jpg', 'adocante_banner.jpg', NULL, 2, 0),
 ('Acerola', 'Acerola', 'prod-acerola',
  '<p>Acerola in natura, rica em vitamina C.</p>',
  '<p>Acerola in natura, rich in vitamin C.</p>',
  '<p>Antioxidante e fortalecedor do sistema imunológico.</p>',
  '<p>Antioxidant and immune system booster.</p>',
- 'Acerola-basket.jpg', 'acerola-info.jpg', 1, 0),
+ 'Acerola-basket.jpg', 'acerola-info.jpg', 'placeholder.pdf', 1, 0),
 ('Maracujá', 'Passion Fruit', 'prod-maracuja',
  '<p>Maracujá tropical brasileiro.</p>',
  '<p>Brazilian tropical passion fruit.</p>',
  '<p>Calmante natural e fonte de fibras.</p>',
  '<p>Natural calmer and fiber source.</p>',
- 'passionfruit.jpg', NULL, 1, 0);
+ 'passionfruit.jpg', NULL, NULL, 1, 0);
 
 -- Frente C1: seeds de segmentos e atribuição a produtos.
 INSERT INTO segmento (idsegmento, slug, nome, nome_en, cor_hex, ordem) VALUES

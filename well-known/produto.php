@@ -134,6 +134,22 @@
 								<p><?= $produto["descricao"]; ?></p>
 								<p><strong>Funcionalidade:</strong></p>
 								<p><?= $produto["funcionalidade"]; ?></p>
+
+								<?php if (!empty($produto['ficha_pdf'])): ?>
+								<div class="rd-ficha-form-wrapper">
+									<h4><i class="fa fa-file-pdf-o" aria-hidden="true"></i> Baixar ficha técnica</h4>
+									<p>Receba a ficha técnica deste produto em seu e-mail. Suas informações ficam confidenciais.</p>
+									<form class="rd-ficha-form" action="baixar_ficha.php" method="POST">
+										<input type="hidden" name="produto_short" value="<?= htmlspecialchars($produto['short'], ENT_QUOTES, 'UTF-8') ?>">
+										<input type="hidden" name="idioma" value="pt">
+										<input type="text"  name="nome"    placeholder="Seu nome (opcional)">
+										<input type="text"  name="empresa" placeholder="Empresa (opcional)">
+										<input type="email" name="email"   placeholder="Seu e-mail (obrigatório)" required>
+										<button type="submit"><i class="fa fa-download" aria-hidden="true"></i> Baixar ficha técnica</button>
+									</form>
+								</div>
+								<?php endif; ?>
+
 								<div class="clear"></div>
 							</div>
 						</div>

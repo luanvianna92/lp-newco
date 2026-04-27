@@ -1,6 +1,7 @@
-<?php 
+<?php
 	header ('Content-type: text/html; charset=UTF-8');
 	require_once 'database.php';
+	require_once __DIR__ . '/partials/segmentos.php';
 
 	if (isset($_GET['id'])) {
 		$id_categoria = $_GET['id'];
@@ -12,12 +13,18 @@
 	$sql = "SELECT * FROM categoria WHERE idcategoria = :idcategoria";
 	$stmt = $conn->prepare($sql);
 	$stmt->bindParam(':idcategoria', $id_categoria);
-	if ($stmt->execute()) {
-		$categoria = $stmt->fetch(PDO::FETCH_ASSOC);
-	} else {
-		echo $stmt->error_info();
-		die();
-	}
+	$stmt->execute();
+	$categoria = $stmt->fetch(PDO::FETCH_ASSOC);
+
+	// Frente C1: pré-carrega produtos + mapa de segmentos para renderizar
+	// tags por produto e a barra de filtros.
+	$stmt_p = $conn->prepare("SELECT * FROM produto WHERE status = 0 AND categoria_idcategoria = :categoria");
+	$stmt_p->bindParam(':categoria', $id_categoria);
+	$stmt_p->execute();
+	$produtos = $stmt_p->fetchAll(PDO::FETCH_ASSOC);
+	$produto_ids = array_map(fn($p) => (int) $p['idproduto'], $produtos);
+	$segmentos_map = segmentos_por_produto($conn, $produto_ids);
+	$segmentos = segmentos_ativos($conn);
 ?>
 
 <!DOCTYPE HTML>
@@ -32,6 +39,7 @@
 	<link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
 	<!--[if lte IE 8]><link rel="stylesheet" href="assets/css/ie8.css" /><![endif]-->
 	<!--[if lte IE 9]><link rel="stylesheet" href="assets/css/ie9.css" /><![endif]-->
+	<link rel="stylesheet" href="assets/css/secoes.css">
 	<style type="text/css">
 		body:before {
 			display: none;
@@ -60,54 +68,78 @@
 			<h3><a href="index.php#produtos"><i class="fa fa-arrow-left" aria-hidden="true"></i></a> / <?php echo $categoria['nome_cat'] ?></h3>
 		</div>
 
+		<!-- Frente C1: filtros por segmento de aplicação -->
+		<?php if (count($segmentos) > 0): ?>
+		<div class="container 90%">
+			<div class="rd-filtros" id="rd-filtros-segmento">
+				<span class="rd-filtros__label">Filtrar por aplicação:</span>
+				<button type="button" class="rd-filtro is-active" data-segmento="">Todos</button>
+				<?php foreach ($segmentos as $seg): ?>
+					<button type="button" class="rd-filtro" data-segmento="<?= htmlspecialchars($seg['slug'], ENT_QUOTES, 'UTF-8') ?>">
+						<?= htmlspecialchars($seg['nome'], ENT_QUOTES, 'UTF-8') ?>
+					</button>
+				<?php endforeach; ?>
+			</div>
+		</div>
+		<?php endif; ?>
+
 		<div class="container 90% gallery caption-style-1">
 			<div class="row 0% images">
 
 				<!-- START PRODUTOS -->
-				<?php
-				$sql = "SELECT * FROM produto WHERE status = 0 AND categoria_idCategoria = :categoria";
-				$stmt = $conn->prepare($sql);
-				$stmt->bindParam(':categoria', $id_categoria);
-				$stmt->execute();
+				<?php foreach ($produtos as $produto):
+					$pid = (int) $produto['idproduto'];
+					$segs = $segmentos_map[$pid] ?? [];
+					$slugs_str = implode(' ', array_map(fn($s) => $s['slug'], $segs));
+				?>
 
-				if ($stmt->rowCount() > 0) {
-					while ($produto = $stmt->fetch(PDO::FETCH_ASSOC)){
-						?>
-
-						<li class="4u 6u(mobile) flex produto" href="<?= $produto["short"]; ?>">
-							<a class="image image-inner fit from-left"><img src="admin/product_images/<?= $produto["imagem"]; ?>" title="<?= $produto["nome"]; ?>" alt="<?= $produto["nome"]; ?>" /></a>
-							<div class="caption">
-								<div class="blur">
-								</div>
-								<div class="caption-text">
-									<h1><?= $produto["nome"]; ?></h1>
-								</div>
-							</div>
-						</li>
-						<!-- MODAL -->
-						<div id="<?= $produto["short"]; ?>" class="modal">
-							<div class="modal-content">
-								<div class="modal-header">
-									<span class="close">×</span>
-									<h2><?= $produto["nome"]; ?></h2>
-								</div>
-								<div class="modal-body">
-									<?php if (!empty($produto["banner"])) {
-										echo '<img src="admin/banners/'.$produto["banner"].'" class="img-banner">';
-									}
-									?>
-									<p><?= $produto["descricao"]; ?></p>
-									<p><strong>Funcionalidade:</strong></p>
-									<p><?= $produto["funcionalidade"]; ?></p>
-									<div class="clear"></div>
-								</div>
+					<li class="4u 6u(mobile) flex produto" href="<?= $produto["short"]; ?>" data-segmentos="<?= htmlspecialchars($slugs_str, ENT_QUOTES, 'UTF-8') ?>">
+						<a class="image image-inner fit from-left"><img src="admin/product_images/<?= $produto["imagem"]; ?>" title="<?= $produto["nome"]; ?>" alt="<?= $produto["nome"]; ?>" /></a>
+						<div class="caption">
+							<div class="blur"></div>
+							<div class="caption-text">
+								<h1><?= $produto["nome"]; ?></h1>
+								<?php if (!empty($segs)): ?>
+									<div class="rd-tags-segmento">
+										<?php foreach ($segs as $s): ?>
+											<span class="rd-tag-segmento" style="background: <?= htmlspecialchars($s['cor_hex'] ?? '#1d4d3a', ENT_QUOTES, 'UTF-8') ?>;">
+												<?= htmlspecialchars($s['nome'], ENT_QUOTES, 'UTF-8') ?>
+											</span>
+										<?php endforeach; ?>
+									</div>
+								<?php endif; ?>
 							</div>
 						</div>
-						<!-- END MODAL -->
-						<?php 
-					}
-				}
-				?>
+					</li>
+					<!-- MODAL -->
+					<div id="<?= $produto["short"]; ?>" class="modal">
+						<div class="modal-content">
+							<div class="modal-header">
+								<span class="close">×</span>
+								<h2><?= $produto["nome"]; ?></h2>
+							</div>
+							<div class="modal-body">
+								<?php if (!empty($produto["banner"])) {
+									echo '<img src="admin/banners/'.$produto["banner"].'" class="img-banner">';
+								} ?>
+								<?php if (!empty($segs)): ?>
+									<div class="rd-tags-segmento" style="margin-bottom: 1rem;">
+										<?php foreach ($segs as $s): ?>
+											<span class="rd-tag-segmento" style="background: <?= htmlspecialchars($s['cor_hex'] ?? '#1d4d3a', ENT_QUOTES, 'UTF-8') ?>;">
+												<?= htmlspecialchars($s['nome'], ENT_QUOTES, 'UTF-8') ?>
+											</span>
+										<?php endforeach; ?>
+									</div>
+								<?php endif; ?>
+								<p><?= $produto["descricao"]; ?></p>
+								<p><strong>Funcionalidade:</strong></p>
+								<p><?= $produto["funcionalidade"]; ?></p>
+								<div class="clear"></div>
+							</div>
+						</div>
+					</div>
+					<!-- END MODAL -->
+				<?php endforeach; ?>
 				<!-- END PRODUTO -->
 
 			</div>
@@ -143,6 +175,27 @@
 	<script src="assets/js/main.js"></script>
 
 	<script type="text/javascript">
+
+	// Frente C1: filtro por segmento (pure JS, sem dependência extra).
+	(function () {
+		var filtros = document.querySelectorAll('#rd-filtros-segmento .rd-filtro');
+		var produtos = document.querySelectorAll('.produto[data-segmentos]');
+		filtros.forEach(function (btn) {
+			btn.addEventListener('click', function () {
+				filtros.forEach(function (b) { b.classList.remove('is-active'); });
+				btn.classList.add('is-active');
+				var alvo = btn.getAttribute('data-segmento');
+				produtos.forEach(function (p) {
+					var segs = (p.getAttribute('data-segmentos') || '').split(' ');
+					if (!alvo || segs.indexOf(alvo) !== -1) {
+						p.classList.remove('is-hidden');
+					} else {
+						p.classList.add('is-hidden');
+					}
+				});
+			});
+		});
+	})();
 
 	// When the user clicks the button, open the modal
 	$(".produto").click(function(event) {

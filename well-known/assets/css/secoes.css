@@ -94,6 +94,75 @@
     margin: 0;
 }
 
+/* ============ Frente C1: filtros e tags de segmento ============ */
+
+.rd-filtros {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin: 1.5rem 0 2rem;
+    align-items: center;
+}
+
+.rd-filtros__label {
+    font-size: 0.85rem;
+    color: var(--rd-color-text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin-right: 0.5rem;
+}
+
+.rd-filtro {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.4rem 0.95rem;
+    border: 1.5px solid var(--rd-color-border);
+    border-radius: 999px;
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: var(--rd-color-text);
+    background: transparent;
+    cursor: pointer;
+    transition: background 200ms ease, border-color 200ms ease, color 200ms ease;
+}
+
+.rd-filtro:hover {
+    border-color: var(--rd-color-primary);
+    color: var(--rd-color-primary);
+}
+
+.rd-filtro.is-active {
+    background: var(--rd-color-primary);
+    border-color: var(--rd-color-primary);
+    color: #fff;
+}
+
+.rd-tags-segmento {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.35rem;
+    margin-top: 0.4rem;
+}
+
+.rd-tag-segmento {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.15rem 0.55rem;
+    font-size: 0.72rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    border-radius: 4px;
+    color: #fff;
+    background: var(--rd-color-primary);
+}
+
+.produto.is-hidden,
+.fruta.is-hidden,
+.item.is-hidden {
+    display: none !important;
+}
+
 /* ============ Mobile ============ */
 
 @media (max-width: 736px) {
@@ -103,5 +172,12 @@
     }
     .rd-bloco {
         padding: 1.25rem;
+    }
+    .rd-filtros {
+        gap: 0.4rem;
+    }
+    .rd-filtros__label {
+        width: 100%;
+        margin-bottom: 0.25rem;
     }
 }

@@ -87,6 +87,30 @@ CREATE TABLE produto (
     REFERENCES categoria (idcategoria) ON DELETE RESTRICT ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
+-- Frente C1: segmentação por aplicação (alimentício, nutracêutico, etc.).
+-- Um produto pode pertencer a múltiplos segmentos (M:N via produto_segmento).
+CREATE TABLE segmento (
+  idsegmento INT UNSIGNED PRIMARY KEY AUTO_INCREMENT,
+  slug VARCHAR(60) NOT NULL,
+  nome VARCHAR(120) NOT NULL,
+  nome_en VARCHAR(120) NOT NULL,
+  cor_hex CHAR(7) DEFAULT NULL,         -- ex: '#1d4d3a'; usado para tag visual
+  ordem SMALLINT UNSIGNED NOT NULL DEFAULT 0,
+  ativo TINYINT UNSIGNED NOT NULL DEFAULT 1,
+  UNIQUE KEY uniq_segmento_slug (slug)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+CREATE TABLE produto_segmento (
+  produto_id INT UNSIGNED NOT NULL,
+  segmento_id INT UNSIGNED NOT NULL,
+  PRIMARY KEY (produto_id, segmento_id),
+  KEY idx_ps_segmento (segmento_id),
+  CONSTRAINT fk_ps_produto FOREIGN KEY (produto_id)
+    REFERENCES produto (idproduto) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT fk_ps_segmento FOREIGN KEY (segmento_id)
+    REFERENCES segmento (idsegmento) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
 CREATE TABLE admin (
   idadmin INT UNSIGNED PRIMARY KEY AUTO_INCREMENT,
   login VARCHAR(100) NOT NULL,
@@ -272,6 +296,19 @@ INSERT INTO produto
  '<p>Calmante natural e fonte de fibras.</p>',
  '<p>Natural calmer and fiber source.</p>',
  'passionfruit.jpg', NULL, 1, 0);
+
+-- Frente C1: seeds de segmentos e atribuição a produtos.
+INSERT INTO segmento (idsegmento, slug, nome, nome_en, cor_hex, ordem) VALUES
+(1, 'alimenticio',  'Alimentício',  'Food',         '#c9a14a', 10),
+(2, 'nutraceutico', 'Nutracêutico', 'Nutraceutical', '#1d4d3a', 20);
+
+-- Por padrão todos os 4 produtos seed são "alimentícios"; adoçantes (Monk Fruit,
+-- Cana de Açúcar) e Acerola também figuram em "nutracêutico" (uso funcional).
+INSERT INTO produto_segmento (produto_id, segmento_id) VALUES
+(1, 1), (1, 2),  -- Monk Fruit: alimentício + nutracêutico
+(2, 1),          -- Cana de Açúcar: alimentício
+(3, 1), (3, 2),  -- Acerola: alimentício + nutracêutico (vit C)
+(4, 1);          -- Maracujá: alimentício
 
 -- Admin master para acesso local.
 -- Login: admin  |  Senha: admin123  (apenas dev — trocar antes de qualquer ambiente compartilhado).

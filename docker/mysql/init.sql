@@ -147,6 +147,30 @@ INSERT INTO secao
  '<p>Discover our product categories by clicking on the images below.</p>',
  '', '');
 
+-- Frente A1: seção Tecnologia (spray-drying) com 3 benefícios em sub-blocos.
+INSERT INTO secao
+  (idsecao, slug, ordem, tipo, titulo, titulo_en, subtitulo, subtitulo_en, conteudo, conteudo_en) VALUES
+(5, 'tecnologia', 35, 'tecnologia',
+ 'Tecnologia', 'Technology',
+ 'Spray-drying: secagem por atomização',
+ 'Spray-drying: atomization drying',
+ '<p>A técnica de Spray-drying (secagem por atomização) é um dos métodos mais eficientes e utilizados na indústria alimentícia e farmacêutica para transformar líquidos (soluções, emulsões ou suspensões) em pó fino e seco. Essa tecnologia é reconhecida por preservar a alta qualidade dos ingredientes, sendo ideal para produtos sensíveis ao calor: a secagem ocorre de forma quase instantânea, minimizando a degradação térmica e garantindo a manutenção das propriedades nutricionais e organolépticas (sabor, aroma e cor) do produto in natura.</p>',
+ '<p>Spray-drying (atomization drying) is one of the most efficient and widely used methods in the food and pharmaceutical industries for transforming liquids (solutions, emulsions or suspensions) into fine, dry powder. This technology is recognized for preserving the high quality of ingredients and is ideal for heat-sensitive products: drying occurs almost instantly, minimizing thermal degradation and ensuring the maintenance of nutritional and organoleptic properties (flavor, aroma and color) of the in natura product.</p>');
+
+INSERT INTO secao_bloco (secao_id, ordem, icone, titulo, titulo_en, conteudo, conteudo_en) VALUES
+(5, 1, 'fa-thermometer-half',
+ 'Baixo dano térmico', 'Low thermal damage',
+ '<p>Embora o ar de entrada seja quente, o tempo de exposição é tão curto e a evaporação da água tão rápida que a temperatura da partícula seca não atinge níveis que causem degradação do produto.</p>',
+ '<p>Although the inlet air is hot, exposure time is so short and water evaporation so rapid that the dried particle temperature never reaches levels that cause product degradation.</p>'),
+(5, 2, 'fa-shield',
+ 'Microencapsulação', 'Microencapsulation',
+ '<p>A técnica permite envolver compostos bioativos em uma matriz protetora (agentes encapsulantes), protegendo nutrientes (vitaminas, antioxidantes) e aromas contra oxidação e volatilização — preservando sabor e cor por prazos de validade mais longos.</p>',
+ '<p>The technique allows bioactive compounds to be wrapped in a protective matrix (encapsulating agents), protecting nutrients (vitamins, antioxidants) and aromas against oxidation and volatilization — preserving flavor and color for longer shelf lives.</p>'),
+(5, 3, 'fa-tint',
+ 'Alta solubilidade', 'High solubility',
+ '<p>Produz um pó esférico e uniforme que se reidrata rapidamente, mantendo a qualidade original do alimento líquido.</p>',
+ '<p>Produces a uniform spherical powder that rehydrates quickly, maintaining the original quality of the liquid food.</p>');
+
 -- Único registro de contato (a tabela é singleton no app).
 INSERT INTO contato (idcontato, endereco, telefone1, telefone2, email) VALUES
 (1, 'Rua Exemplo, 100 — Centro, Cidade/UF, CEP 00000-000',

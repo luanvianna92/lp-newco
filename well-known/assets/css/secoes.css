@@ -1,0 +1,107 @@
+/*
+ * Estilos das novas seções institucionais (Tecnologia, Localização, Sustentabilidade).
+ * Carregado APÓS main.css; seletores escopados em .rd-secao-* para não conflitar com legado.
+ *
+ * Se assets/css/redesign.css existir (frente B1), os tokens --rd-* aplicam.
+ * Caso contrário, este arquivo define fallbacks próprios.
+ */
+
+:root {
+    --rd-color-primary: #1d4d3a;
+    --rd-color-primary-dark: #103024;
+    --rd-color-accent: #c9a14a;
+    --rd-color-text: #1f2a26;
+    --rd-color-text-muted: #6b7770;
+    --rd-color-bg-light: rgba(255, 255, 255, 0.92);
+    --rd-color-border: rgba(255, 255, 255, 0.18);
+    --rd-secao-radius: 12px;
+}
+
+/* ============ Subtítulo das seções novas ============ */
+
+.rd-secao-subtitulo {
+    margin: 0.25rem 0 1.5rem 0;
+    font-size: 1.05rem;
+    color: var(--rd-color-accent);
+    font-weight: 500;
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+}
+
+/* ============ Grid de blocos (3 cards de benefício, 4 KPIs etc.) ============ */
+
+.rd-blocos-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 1.5rem;
+    margin-top: 2rem;
+    width: 100%;
+    max-width: 980px;
+}
+
+.rd-bloco {
+    background: var(--rd-color-bg-light);
+    color: var(--rd-color-text);
+    padding: 1.5rem;
+    border-radius: var(--rd-secao-radius);
+    border: 1px solid var(--rd-color-border);
+    text-align: left;
+    transition: transform 200ms ease, box-shadow 200ms ease;
+}
+
+.rd-bloco:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+}
+
+.rd-bloco__icone {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background: var(--rd-color-primary);
+    color: var(--rd-color-accent);
+    font-size: 1.25rem;
+    margin-bottom: 1rem;
+}
+
+.rd-bloco__valor {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--rd-color-primary);
+    line-height: 1.1;
+    margin-bottom: 0.25rem;
+}
+
+.rd-bloco__titulo {
+    font-size: 1.05rem;
+    font-weight: 600;
+    color: var(--rd-color-text);
+    margin: 0 0 0.5rem 0;
+    text-transform: none;
+    letter-spacing: 0;
+}
+
+.rd-bloco__conteudo {
+    font-size: 0.92rem;
+    color: var(--rd-color-text-muted);
+    line-height: 1.5;
+}
+
+.rd-bloco__conteudo p {
+    margin: 0;
+}
+
+/* ============ Mobile ============ */
+
+@media (max-width: 736px) {
+    .rd-blocos-grid {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+    .rd-bloco {
+        padding: 1.25rem;
+    }
+}

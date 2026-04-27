@@ -2,6 +2,7 @@
 header ('Content-type: text/html; charset=UTF-8');
 //CONECTA COM O BANCO DE DADOS
 require_once '../database.php';
+require_once __DIR__ . '/../partials/secao_blocos.php';
 
 //CARREGAR SEÇÕES INSTITUCIONAIS DO BANCO DE DADOS (slug => row)
 $sql = "SELECT * FROM secao WHERE ativo = 1 ORDER BY ordem ASC";
@@ -13,6 +14,8 @@ $secao = [];
 foreach ($stmt_secao->fetchAll(\PDO::FETCH_ASSOC) as $row) {
 	$secao[$row['slug']] = $row;
 }
+
+$blocos_tecnologia = secao_blocos_por_slug($conn, 'tecnologia');
 
 //CARREGAR INFORMAÇÕES DE CONTATO DO BANCO DE DADOS
 $sql = "SELECT * FROM contato";
@@ -47,6 +50,7 @@ if (!$stmt_categoria->execute()) {
 	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css">
 	<!--[if lte IE 8]><link rel="stylesheet" href="../assets/css/ie8.css" /><![endif]-->
 	<!--[if lte IE 9]><link rel="stylesheet" href="../assets/css/ie9.css" /><![endif]-->
+	<link rel="stylesheet" href="../assets/css/secoes.css">
 </head>
 <body>
 
@@ -155,6 +159,39 @@ if (!$stmt_categoria->execute()) {
 	</div>
 	<!-- END MODAL -->
 	<!-- END O QUE FAZEMOS -->
+
+
+
+	<!-- SEÇÃO tecnologia (A1: spray-drying) -->
+	<?php if (!empty($secao['tecnologia'])): ?>
+	<section id="tecnologia" class="main style2 right dark fullscreen">
+		<div class="content box style2">
+			<header>
+				<h2><?= htmlspecialchars($secao['tecnologia']['titulo_en'], ENT_QUOTES, 'UTF-8') ?></h2>
+				<?php if (!empty($secao['tecnologia']['subtitulo_en'])): ?>
+					<p class="rd-secao-subtitulo"><?= htmlspecialchars($secao['tecnologia']['subtitulo_en'], ENT_QUOTES, 'UTF-8') ?></p>
+				<?php endif; ?>
+			</header>
+			<?= $secao['tecnologia']['conteudo_en'] ?? '' ?>
+
+			<?php if (!empty($blocos_tecnologia)): ?>
+				<div class="rd-blocos-grid">
+					<?php foreach ($blocos_tecnologia as $b): ?>
+						<div class="rd-bloco">
+							<?php if (!empty($b['icone'])): ?>
+								<span class="rd-bloco__icone"><i class="fa <?= htmlspecialchars($b['icone'], ENT_QUOTES, 'UTF-8') ?>" aria-hidden="true"></i></span>
+							<?php endif; ?>
+							<h3 class="rd-bloco__titulo"><?= htmlspecialchars($b['titulo_en'], ENT_QUOTES, 'UTF-8') ?></h3>
+							<div class="rd-bloco__conteudo"><?= $b['conteudo_en'] ?></div>
+						</div>
+					<?php endforeach; ?>
+				</div>
+			<?php endif; ?>
+		</div>
+		<a href="#produtos" class="button style2 down anchored">Next</a>
+	</section>
+	<?php endif; ?>
+	<!-- END TECNOLOGIA -->
 
 
 

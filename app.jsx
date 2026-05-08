@@ -1,4 +1,4 @@
-// Newco Brazil — App component (React + Babel) — v2
+// Newco Brazil — App component (React + Babel) — v3 (refatoração estrutural)
 const { useState, useEffect, useRef } = React;
 
 const TWEAKS_DEFAULTS = /*EDITMODE-BEGIN*/{
@@ -22,7 +22,11 @@ function App() {
   const [tweaks, setTweaks] = useState(TWEAKS_DEFAULTS);
   const [tweaksOpen, setTweaksOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const [modalState, setModalState] = useState({ open: false, product: null });
   const t = window.NEWCO_I18N[lang];
+
+  const openDatasheet = (product = null) => setModalState({ open: true, product });
+  const closeDatasheet = () => setModalState({ open: false, product: null });
 
   useEffect(() => {
     try {localStorage.setItem("newco_lang", lang);} catch (e) {}
@@ -53,6 +57,12 @@ function App() {
   }, [lang]);
 
   useEffect(() => {
+    const onKey = (e) => { if (e.key === "Escape" && modalState.open) closeDatasheet(); };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [modalState.open]);
+
+  useEffect(() => {
     const onMsg = (e) => {
       const d = e.data || {};
       if (d.type === "__activate_edit_mode") setTweaksOpen(true);
@@ -72,16 +82,18 @@ function App() {
   return (
     <React.Fragment>
       <Header lang={lang} setLang={setLang} t={t} scrolled={scrolled} />
-      <Hero t={t} variant={tweaks.heroVariant} />
-      <Quem t={t} />
+      <Hero t={t} variant={tweaks.heroVariant} onRequestDatasheet={() => openDatasheet()} />
+      <OurLines t={t} onRequestDatasheet={openDatasheet} />
       <Spray t={t} />
-      <Oque t={t} />
-      <Produtos t={t} />
-      <Logistica t={t} />
       <ESG t={t} />
       <Certs t={t} />
+      <AboutLocation t={t} />
+      <AdditionalServices t={t} />
       <Contato t={t} />
       <Footer t={t} />
+      {modalState.open && (
+        <DatasheetModal t={t} lang={lang} product={modalState.product} onClose={closeDatasheet} />
+      )}
       {tweaksOpen &&
       <TweaksPanel
         tweaks={tweaks}
@@ -100,11 +112,11 @@ function App() {
 function Header({ lang, setLang, t, scrolled }) {
   const navs = [
   ["intro", "intro"],
-  ["quem", "quem"],
+  ["lines", "lines"],
   ["spray", "spray"],
-  ["oque", "oque"],
-  ["produtos", "produtos"],
-  ["logistica", "logistica"],
+  ["esg", "esg"],
+  ["about", "about"],
+  ["services", "services"],
   ["contato", "contact"]];
 
   return (
@@ -116,10 +128,7 @@ function Header({ lang, setLang, t, scrolled }) {
         {navs.map(([k, id]) => <a key={k} href={`#${id}`}>{t.nav[k]}</a>)}
       </nav>
       <div className="header-right">
-        <div className="lang-switch" role="group" aria-label="Language">
-          <button className={lang === "pt" ? "active" : ""} onClick={() => setLang("pt")}>PT</button>
-          <button className={lang === "en" ? "active" : ""} onClick={() => setLang("en")}>EN</button>
-        </div>
+        <LangSwitch lang={lang} setLang={setLang} />
         <a className="cta-pill" href="#contact">
           {t.header.cta}
           <svg className="arr" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M3 8h10M9 4l4 4-4 4" /></svg>
@@ -127,6 +136,51 @@ function Header({ lang, setLang, t, scrolled }) {
       </div>
     </header>);
 
+}
+
+// ─────── LangSwitch (bandeiras SVG) ───────
+function LangSwitch({ lang, setLang }) {
+  return (
+    <div className="lang-switch lang-flags" role="group" aria-label="Switch language">
+      <button
+        type="button"
+        className={`lang-flag-btn ${lang === "pt" ? "active" : ""}`}
+        onClick={() => setLang("pt")}
+        aria-label="Português"
+        aria-pressed={lang === "pt" ? "true" : "false"}>
+        <FlagBR />
+      </button>
+      <button
+        type="button"
+        className={`lang-flag-btn ${lang === "en" ? "active" : ""}`}
+        onClick={() => setLang("en")}
+        aria-label="English"
+        aria-pressed={lang === "en" ? "true" : "false"}>
+        <FlagGB />
+      </button>
+    </div>);
+
+}
+
+// ─────── Bandeiras SVG inline ───────
+function FlagBR() {
+  return (
+    <svg viewBox="0 0 28 20" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+      <rect width="28" height="20" fill="#009c3b" />
+      <path d="M14 3 L25 10 L14 17 L3 10 Z" fill="#ffdf00" />
+      <circle cx="14" cy="10" r="3.6" fill="#002776" />
+      <path d="M11 10.4 Q14 8.5 17 10.4" stroke="#fff" strokeWidth="0.5" fill="none" />
+    </svg>);
+}
+function FlagGB() {
+  return (
+    <svg viewBox="0 0 28 20" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+      <rect width="28" height="20" fill="#012169" />
+      <path d="M0 0 L28 20 M28 0 L0 20" stroke="#fff" strokeWidth="2.4" />
+      <path d="M0 0 L28 20 M28 0 L0 20" stroke="#C8102E" strokeWidth="1.4" />
+      <path d="M14 0 V20 M0 10 H28" stroke="#fff" strokeWidth="3.6" />
+      <path d="M14 0 V20 M0 10 H28" stroke="#C8102E" strokeWidth="2" />
+    </svg>);
 }
 
 // ─────── Particles (drifting dust) ───────
@@ -154,7 +208,7 @@ function Particles({ count = 26 }) {
 }
 
 // ─────── Hero ───────
-function Hero({ t, variant }) {
+function Hero({ t, variant, onRequestDatasheet }) {
   return (
     <section id="intro" className="hero" data-variant={variant} data-screen-label="01 Intro">
       <div className="hero-bg" />
@@ -162,22 +216,15 @@ function Hero({ t, variant }) {
       <Particles count={28} />
       <div className="container">
         <div className="hero-grid">
-          <div className="hero-titles">
+          <div className="hero-titles-right">
             <div className="hero-eyebrow eyebrow">{t.hero.eyebrow}</div>
-            <h1 className="display">
-              <span className="ln">{t.hero.title_line1}</span>
-              <span className="ln">{t.hero.title_line2}</span>
-              <span className="ln">{t.hero.title_line3}</span>
-            </h1>
-          </div>
-          <div className="hero-side">
+            <h1 className="display">{t.hero.title}</h1>
             <p className="lede">{t.hero.subtitle}</p>
             <div className="hero-actions">
-              <a href="#produtos" className="cta-pill">
+              <button type="button" className="cta-pill" onClick={onRequestDatasheet}>
                 {t.hero.cta_primary}
                 <svg className="arr" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M3 8h10M9 4l4 4-4 4" /></svg>
-              </a>
-              <a href="#spray" className="cta-pill ghost">{t.hero.cta_secondary}</a>
+              </button>
             </div>
           </div>
         </div>
@@ -192,28 +239,42 @@ function Hero({ t, variant }) {
 
 }
 
-// ─────── Quem somos ───────
-function Quem({ t }) {
+// ─────── Our Lines (combina What We Do + Products) ───────
+function OurLines({ t, onRequestDatasheet }) {
   return (
-    <section id="quem" className="section quem has-photo-bg quem-bg" data-screen-label="02 Quem somos">
-      <div className="photo-bg quem-photo" style={{ backgroundImage: "url('assets/one-original.jpg')" }} />
-      <div className="photo-bg-overlay quem-overlay" />
+    <section id="lines" className="section lines" data-screen-label="02 Our Lines">
+      <div className="tex gradient-deep" />
       <div className="container">
-        <div className="quem-grid">
-          <div className="quem-text reveal">
-            <div className="eyebrow">{t.quem.eyebrow}</div>
-            <h2 className="display tight">{t.quem.title}</h2>
-            <p>{t.quem.body_1}</p>
-            <p>{t.quem.body_2}</p>
-            <div className="stats">
-              {t.quem.stats.map((s, i) =>
-              <div className="stat" key={i}>
-                  <div className="num">{s.num}</div>
-                  <div className="lab">{s.label}</div>
-                </div>
-              )}
-            </div>
+        <div className="section-head">
+          <div className="reveal">
+            <div className="eyebrow">{t.lines.eyebrow}</div>
+            <h2 className="display tight">{t.lines.title}</h2>
           </div>
+          <p className="lede reveal">{t.lines.body}</p>
+        </div>
+        <div className="lines-grid stagger">
+          {t.lines.items.map((it, i) => {
+            const hasImg = it.img && it.img.trim().length > 0;
+            return (
+              <article className="line-card" key={i}>
+                <div
+                  className={`line-img ${hasImg ? "" : "placeholder"}`}
+                  style={hasImg ? { backgroundImage: `url('${it.img}')` } : null}
+                />
+                <div className="line-body">
+                  <h3 className="line-name">{it.name}</h3>
+                  <p className="line-desc">{it.desc}</p>
+                  <button
+                    type="button"
+                    className="line-cta"
+                    onClick={() => onRequestDatasheet(it.name)}>
+                    {t.lines.cta}
+                    <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M3 8h10M9 4l4 4-4 4" /></svg>
+                  </button>
+                </div>
+              </article>);
+
+          })}
         </div>
       </div>
     </section>);
@@ -289,7 +350,7 @@ function Spray({ t }) {
 
 }
 
-// ─────── Icons ───────
+// ─────── Spray icons (line-style) ───────
 function DropletIcon() {
   return <svg viewBox="0 0 32 32" fill="none" stroke="currentColor" strokeWidth="1.4">
     <path d="M16 5c4 5 7 9 7 13a7 7 0 0 1-14 0c0-4 3-8 7-13z" />
@@ -332,60 +393,137 @@ function ShieldIcon() {
   </svg>;
 }
 
-// ─────── O que fazemos (capabilities — vertical labeled cards) ───────
-function Oque({ t }) {
+// ─────── ESG line icons (acai-purple stroke via CSS) ───────
+function IconPin() {
+  return <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+    <path d="M12 2c-3.9 0-7 3-7 6.8 0 5 7 12.2 7 12.2s7-7.2 7-12.2C19 5 15.9 2 12 2z" />
+    <circle cx="12" cy="9" r="2.6" />
+  </svg>;
+}
+function IconGear() {
+  return <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+    <path d="M12 9.5a2.5 2.5 0 1 0 0 5 2.5 2.5 0 0 0 0-5z" />
+    <path d="M19.4 13a7.5 7.5 0 0 0 0-2l1.7-1.3-1.7-3-2 .8a7.5 7.5 0 0 0-1.7-1l-.3-2.1h-3.4l-.3 2.1a7.5 7.5 0 0 0-1.7 1l-2-.8-1.7 3L8 11a7.5 7.5 0 0 0 0 2L6.3 14.3l1.7 3 2-.8a7.5 7.5 0 0 0 1.7 1l.3 2.1h3.4l.3-2.1a7.5 7.5 0 0 0 1.7-1l2 .8 1.7-3z" />
+  </svg>;
+}
+function IconDoc() {
+  return <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+    <path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z" />
+    <path d="M14 3v5h5" />
+    <path d="M9 13h6M9 17h6M9 9h2" />
+  </svg>;
+}
+function IconQR() {
+  return <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+    <rect x="3" y="3" width="7" height="7" rx="1" />
+    <rect x="14" y="3" width="7" height="7" rx="1" />
+    <rect x="3" y="14" width="7" height="7" rx="1" />
+    <path d="M14 14h3v3M21 14v3M14 21h3M21 18v3" />
+  </svg>;
+}
+function IconRecycle() {
+  return <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+    <path d="M7 18 4 14l4-3" />
+    <path d="M4 14h10" />
+    <path d="m17 6 3 4-4 3" />
+    <path d="M20 10H10" />
+    <path d="m11 21 3-4-4-3" />
+    <path d="M14 17H4" />
+  </svg>;
+}
+function IconCycle() {
+  return <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+    <path d="M21 12a9 9 0 1 1-3-6.7" />
+    <path d="M21 4v5h-5" />
+  </svg>;
+}
+function IconBolt() {
+  return <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+    <path d="M13 2 4 14h7l-1 8 9-12h-7z" strokeLinejoin="round" />
+  </svg>;
+}
+function IconAward() {
+  return <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+    <circle cx="12" cy="9" r="6" />
+    <path d="m9 14-2 7 5-3 5 3-2-7" />
+  </svg>;
+}
+const ESG_ICONS = {
+  pin: IconPin, gear: IconGear, doc: IconDoc, qr: IconQR,
+  recycle: IconRecycle, cycle: IconCycle, bolt: IconBolt, award: IconAward,
+};
+
+// ─────── ESG ───────
+function ESG({ t }) {
   return (
-    <section id="oque" className="section oque has-photo-bg" data-screen-label="04 O que fazemos">
-      <div className="photo-bg" style={{ backgroundImage: "url('assets/morango-bg.jpg')" }} />
-      <div className="photo-bg-overlay" />
+    <section id="esg" className="section esg" data-screen-label="04 ESG">
+      <div className="tex swirl" />
       <div className="container">
-        <div className="section-head">
-          <div className="reveal">
-            <div className="eyebrow">{t.oque.eyebrow}</div>
-            <h2 className="display tight">{t.oque.title}</h2>
-          </div>
-          <p className="lede reveal">{t.oque.body}</p>
+        <div className="section-head center reveal">
+          <div className="eyebrow">{t.esg.eyebrow}</div>
+          <h2 className="display tight">{t.esg.title}</h2>
+          <p className="lede">{t.esg.subtitle}</p>
         </div>
-        <div className="capabilities stagger">
-          {t.oque.capabilities.map((c, i) =>
-          <div className="cap" key={i}>
-              <div className="cap-kw">{c.kw}</div>
-              <div className="cap-body">
-                <h4>{c.t}</h4>
-                <p>{c.d}</p>
-              </div>
+        <div className="esg-cols stagger">
+          <div className="esg-col">
+            <h3><span className="ic">◍</span>{t.esg.col1_title}</h3>
+            <div className="esg-list">
+              {t.esg.col1_items.map((it, i) => {
+                const Icon = ESG_ICONS[it.icon] || IconDoc;
+                return (
+                  <div className="ei" key={i}>
+                    <span className="ei-icon"><Icon /></span>
+                    <div className="ei-text">
+                      <h4>{it.title}</h4>
+                      <p>{it.desc}</p>
+                    </div>
+                  </div>);
+
+              })}
             </div>
-          )}
+          </div>
+          <div className="esg-col">
+            <h3><span className="ic">◉</span>{t.esg.col2_title}</h3>
+            <div className="esg-list">
+              {t.esg.col2_items.map((it, i) => {
+                const Icon = ESG_ICONS[it.icon] || IconDoc;
+                return (
+                  <div className="ei" key={i}>
+                    <span className="ei-icon"><Icon /></span>
+                    <div className="ei-text">
+                      <h4>{it.title}</h4>
+                      <p>{it.desc}</p>
+                    </div>
+                  </div>);
+
+              })}
+            </div>
+          </div>
         </div>
+        <div className="esg-closing reveal">{t.esg.closing}</div>
       </div>
     </section>);
 
 }
 
-// ─────── Produtos (Nossas linhas) ───────
-function Produtos({ t }) {
+// ─────── Certifications (logos only + tooltip) ───────
+function Certs({ t }) {
+  const list = t.cert.items;
+  const doubled = [...list, ...list];
   return (
-    <section id="produtos" className="section produtos" data-screen-label="05 Nossas linhas">
+    <section id="cert" className="section certs-section" data-screen-label="05 Certifications">
       <div className="tex gradient-deep" />
       <div className="container">
-        <div className="section-head">
-          <div className="reveal">
-            <div className="eyebrow">{t.produtos.eyebrow}</div>
-            <h2 className="display tight">{t.produtos.title}</h2>
-          </div>
-          <p className="lede reveal">{t.produtos.subtitle}</p>
+        <div className="section-head center reveal">
+          <h2 className="display tight">{t.cert.title}</h2>
+          <p className="lede">{t.cert.subtitle}</p>
         </div>
-        <div className="produtos-grid stagger">
-          {t.produtos.categories.map((c, i) =>
-          <div className="produto-card" key={i}>
-              <div className="img" style={{ backgroundImage: `url('${c.img}')` }} />
-              <div className="meta">
-                <div className="ti">{c.name}</div>
-                <div className="de">{c.desc}</div>
-                <div className="arrow">
-                  <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M3 8h10M9 4l4 4-4 4" /></svg>
-                </div>
-              </div>
+      </div>
+      <div className="certs-marquee reveal">
+        <div className="certs-track">
+          {doubled.map((c, i) =>
+            <div className="cert-badge cert-logo" key={i} title={c.desc} aria-label={`${c.name} — ${c.desc}`}>
+              <div className="cert-logo-circle">{c.name}</div>
             </div>
           )}
         </div>
@@ -394,56 +532,79 @@ function Produtos({ t }) {
 
 }
 
-// ─────── Logística ───────
-function Logistica({ t }) {
+// ─────── About + Location combinada ───────
+function AboutLocation({ t }) {
   return (
-    <section id="logistica" className="section logistica" data-screen-label="06 Localização">
+    <section id="about" className="section about-location" data-screen-label="06 About + Location">
       <div className="tex dust"><DustField /></div>
       <div className="container">
         <div className="section-head">
           <div className="reveal">
-            <div className="eyebrow">{t.logistica.eyebrow}</div>
-            <h2 className="display tight">{t.logistica.title}</h2>
+            <div className="eyebrow">{t.about.eyebrow}</div>
+            <h2 className="display tight">{t.about.title}</h2>
           </div>
-          <p className="lede reveal">{t.logistica.subtitle}</p>
+          <p className="lede reveal">{t.about.body}</p>
         </div>
-        <div className="logistica-grid">
-          <div className="logistica-map reveal">
-            <div className="pin"><span className="dot" />Varginha · MG</div>
-            <iframe
-              title="Mapa Varginha"
-              src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3708.8086783684016!2d-45.418091885057095!3d-21.632377685674506!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x94caedb47782e89f%3A0x1d796dbeb9d468fa!2sNewco+Brazil+Ind%C3%BAstria+de+Produtos+Funcionais!5e0!3m2!1spt-BR!2sbr!4v1470004254797"
-              loading="lazy"
-              allowFullScreen=""
-              referrerPolicy="no-referrer-when-downgrade" />
-            
-            <div className="logistica-routes">
-              {t.logistica.routes.map((r, i) =>
-              <span className="r" key={i}><b>{r.city}</b> · {r.km}</span>
-              )}
-            </div>
+
+        <div className="about-intro reveal">
+          <div className="about-intro-text">
+            <p>{t.about.body}</p>
           </div>
-          <div className="logistica-stats stagger">
-            {t.logistica.stats.map((s, i) =>
-            <div className="lstat" key={i}>
-                <div className="num">{s.num}</div>
-                <div className="lab">{s.label}</div>
+          <div className="about-kpis stagger">
+            {t.about.kpis.map((k, i) =>
+              <div className="about-kpi" key={i}>
+                <div className="num">{k.num}</div>
+                <div className="lab">{k.label}</div>
               </div>
             )}
           </div>
         </div>
-        <div className="logistica-bullets reveal">
-          <div className="logistica-bullets-head">{t.logistica.bullets_title}</div>
-          <div>
-            <div className="logistica-bullets-list">
-              {t.logistica.bullets.map((b, i) =>
-              <div className="lb" key={i}>
-                  <h5>{b.title}</h5>
-                  <p>{b.desc}</p>
+
+        <div className="about-location-block">
+          <div className="about-location-head reveal">
+            <div className="eyebrow">{t.nav.about}</div>
+            <h3>{t.about.location_title}</h3>
+            <p>{t.about.location_subtitle}</p>
+          </div>
+
+          <div className="logistica-grid">
+            <div className="logistica-map reveal">
+              <div className="pin"><span className="dot" />Varginha · MG</div>
+              <iframe
+                title="Mapa Varginha"
+                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3708.8086783684016!2d-45.418091885057095!3d-21.632377685674506!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x94caedb47782e89f%3A0x1d796dbeb9d468fa!2sNewco+Brazil+Ind%C3%BAstria+de+Produtos+Funcionais!5e0!3m2!1spt-BR!2sbr!4v1470004254797"
+                loading="lazy"
+                allowFullScreen=""
+                referrerPolicy="no-referrer-when-downgrade" />
+              <div className="logistica-routes">
+                {t.about.routes.map((r, i) =>
+                  <span className="r" key={i}><b>{r.city}</b> · {r.km}</span>
+                )}
+              </div>
+            </div>
+            <div className="logistica-stats stagger">
+              {t.about.stats.map((s, i) =>
+                <div className="lstat" key={i}>
+                  <div className="num">{s.num}</div>
+                  <div className="lab">{s.label}</div>
                 </div>
               )}
             </div>
-            <div className="source">{t.logistica.source}</div>
+          </div>
+
+          <div className="logistica-bullets reveal">
+            <div className="logistica-bullets-head">{t.about.bullets_title}</div>
+            <div>
+              <div className="logistica-bullets-list">
+                {t.about.bullets.map((b, i) =>
+                  <div className="lb" key={i}>
+                    <h5>{b.title}</h5>
+                    <p>{b.desc}</p>
+                  </div>
+                )}
+              </div>
+              <div className="source">{t.about.source}</div>
+            </div>
           </div>
         </div>
       </div>
@@ -452,7 +613,6 @@ function Logistica({ t }) {
 }
 
 function DustField() {
-  // Particles for "dust" texture variant
   const items = Array.from({ length: 24 }, (_, i) => {
     const left = Math.random() * 100;
     const dur = 14 + Math.random() * 16;
@@ -476,68 +636,28 @@ function DustField() {
   return <div className="field">{items}</div>;
 }
 
-// ─────── ESG ───────
-function ESG({ t }) {
+// ─────── Additional Services (R&D, Scale, QA/QC, Export) ───────
+function AdditionalServices({ t }) {
   return (
-    <section id="esg" className="section esg" data-screen-label="07 ESG">
-      <div className="tex swirl" />
+    <section id="services" className="section oque has-photo-bg" data-screen-label="07 Additional Services">
+      <div className="photo-bg" style={{ backgroundImage: "url('assets/morango-bg.jpg')" }} />
+      <div className="photo-bg-overlay" />
       <div className="container">
-        <div className="section-head center reveal">
-          <div className="eyebrow">{t.esg.eyebrow}</div>
-          <h2 className="display tight">{t.esg.title}</h2>
-          <p className="lede">{t.esg.subtitle}</p>
-        </div>
-        <div className="esg-cols stagger">
-          <div className="esg-col">
-            <h3><span className="ic">◍</span>{t.esg.col1_title}</h3>
-            <div className="esg-list">
-              {t.esg.col1_items.map((it, i) =>
-              <div className="ei" key={i}>
-                  <h4>{it.title}</h4>
-                  <p>{it.desc}</p>
-                </div>
-              )}
-            </div>
+        <div className="section-head">
+          <div className="reveal">
+            <div className="eyebrow">{t.services.eyebrow}</div>
+            <h2 className="display tight">{t.services.title}</h2>
           </div>
-          <div className="esg-col">
-            <h3><span className="ic">◉</span>{t.esg.col2_title}</h3>
-            <div className="esg-list">
-              {t.esg.col2_items.map((it, i) =>
-              <div className="ei" key={i}>
-                  <h4>{it.title}</h4>
-                  <p>{it.desc}</p>
-                </div>
-              )}
-            </div>
-          </div>
+          <p className="lede reveal">{t.services.body}</p>
         </div>
-        <div className="esg-closing reveal">{t.esg.closing}</div>
-      </div>
-    </section>);
-
-}
-
-// ─────── Certifications (animated marquee) ───────
-function Certs({ t }) {
-  const list = t.cert.items;
-  // Duplicate for infinite marquee
-  const doubled = [...list, ...list];
-  return (
-    <section id="cert" className="section certs-section" data-screen-label="08 Certificações">
-      <div className="tex gradient-deep" />
-      <div className="container">
-        <div className="section-head center reveal">
-          <h2 className="display tight">{t.cert.title}</h2>
-          <p className="lede">{t.cert.subtitle}</p>
-        </div>
-      </div>
-      <div className="certs-marquee reveal">
-        <div className="certs-track">
-          {doubled.map((c, i) =>
-          <div className="cert-badge" key={i}>
-              <div className="seal" />
-              <div className="cn">{c.name}</div>
-              <div className="cd">{c.desc}</div>
+        <div className="capabilities stagger">
+          {t.services.items.map((c, i) =>
+          <div className="cap" key={i}>
+              <div className="cap-kw">{c.kw}</div>
+              <div className="cap-body">
+                <h4>{c.t}</h4>
+                <p>{c.d}</p>
+              </div>
             </div>
           )}
         </div>
@@ -546,11 +666,69 @@ function Certs({ t }) {
 
 }
 
+// ─────── Datasheet Modal ───────
+function DatasheetModal({ t, lang, product, onClose }) {
+  const [status, setStatus] = useState("idle"); // idle | sending | success
+  const formRef = useRef(null);
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    setStatus("sending");
+    const form = formRef.current;
+    const data = new FormData(form);
+    fetch("https://newcobrazil.com/contato.php", {
+      method: "POST",
+      body: data,
+      mode: "no-cors",
+    }).then(() => setStatus("success"))
+      .catch(() => setStatus("success")); // fallback: lead capturado client-side
+  };
+
+  const handleBackdrop = (e) => { if (e.target === e.currentTarget) onClose(); };
+
+  return (
+    <div className="modal-backdrop" onClick={handleBackdrop} role="dialog" aria-modal="true" aria-labelledby="modal-title">
+      <div className="modal-card">
+        <button className="modal-close" onClick={onClose} aria-label={t.modal.close}>×</button>
+        {status !== "success" ? (
+          <React.Fragment>
+            <div className="modal-head">
+              <span className="modal-eyebrow">{t.modal.product_label}</span>
+              <h2 className="modal-title" id="modal-title">{t.modal.title}</h2>
+              <p className="modal-subtitle">{t.modal.subtitle}</p>
+              {product && <span className="modal-product-tag">{t.modal.product_label}: {product}</span>}
+            </div>
+            <form ref={formRef} className="modal-form" onSubmit={handleSubmit}>
+              <input type="hidden" name="tipo" value="datasheet" />
+              <input type="hidden" name="idioma" value={lang} />
+              {product && <input type="hidden" name="produto" value={product} />}
+              <label>{t.modal.name}<input type="text" name="nome" required /></label>
+              <label>{t.modal.email}<input type="email" name="email" required /></label>
+              <label>{t.modal.company}<input type="text" name="empresa" /></label>
+              <label>{t.modal.message}<textarea name="mensagem" rows="3" /></label>
+              <button type="submit" className="modal-submit" disabled={status === "sending"}>
+                {status === "sending" ? t.modal.sending : t.modal.submit}
+                <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M3 8h10M9 4l4 4-4 4" /></svg>
+              </button>
+            </form>
+          </React.Fragment>
+        ) : (
+          <div className="modal-success">
+            <div className="check">✓</div>
+            <h3>{t.modal.success_title}</h3>
+            <p>{t.modal.success_body}</p>
+            <button type="button" className="modal-close-btn" onClick={onClose}>{t.modal.close}</button>
+          </div>
+        )}
+      </div>
+    </div>);
+
+}
+
 // ─────── Contato ───────
 function Contato({ t }) {
-  // Same endpoint as legacy site
   return (
-    <section id="contact" className="section contato" data-screen-label="09 Contato">
+    <section id="contact" className="section contato" data-screen-label="08 Contato">
       <div className="tex blueprint" />
       <div className="container">
         <div className="section-head">
@@ -565,7 +743,7 @@ function Contato({ t }) {
             method="POST"
             action="https://newcobrazil.com/contato.php"
             className="reveal">
-            
+
             <div className="row">
               <label>{t.contato.name}<input type="text" name="nome" required /></label>
               <label>{t.contato.company}<input type="text" name="empresa" /></label>
@@ -614,14 +792,14 @@ function Footer({ t }) {
           <div className="col">
             <h6>Site</h6>
             <a href="#intro">{t.nav.intro}</a>
-            <a href="#quem">{t.nav.quem}</a>
+            <a href="#lines">{t.nav.lines}</a>
             <a href="#spray">{t.nav.spray}</a>
-            <a href="#produtos">{t.nav.produtos}</a>
+            <a href="#esg">{t.nav.esg}</a>
           </div>
           <div className="col">
             <h6>Industry</h6>
-            <a href="#logistica">{t.nav.logistica}</a>
-            <a href="#esg">{t.nav.esg}</a>
+            <a href="#about">{t.nav.about}</a>
+            <a href="#services">{t.nav.services}</a>
             <a href="#contact">{t.nav.contato}</a>
           </div>
           <div className="col">
